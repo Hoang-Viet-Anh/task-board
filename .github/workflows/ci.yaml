@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker Compose
-      run: docker compose build --tag task-board:$(date +%s)
+      run: docker compose build
