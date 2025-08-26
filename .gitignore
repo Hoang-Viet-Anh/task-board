@@ -1,0 +1,18 @@
+# IDE/Tool-related folders
+.vs/
+.vscode/
+
+.env
+.secrets
+
+*.deps.json
+/bin
+/obj
+
+# .NET build artifacts
+**/bin/
+**/obj/
+**/*.user
+**/*.suo
+**/*.cache
+**/.vs/

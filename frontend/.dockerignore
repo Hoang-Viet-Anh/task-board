@@ -1,0 +1,15 @@
+node_modules
+.git
+.vscode
+dist
+coverage
+npm-debug.log
+yarn-error.log
+.DS_Store
+.env
+*.swp
+*.swo
+.idea
+*.iml
+*.log
+README.md

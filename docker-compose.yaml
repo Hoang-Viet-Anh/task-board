@@ -1,0 +1,41 @@
+services:
+  taskboard-postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: ${TASKBOARD_DB_USER}
+      POSTGRES_PASSWORD: ${TASKBOARD_DB_PASSWORD}
+      POSTGRES_DB: taskboard
+    ports:
+      - "5500:5432"
+    volumes:
+      - taskboard-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready taskboard"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  taskboard-api:
+    build: ./backend/TaskBoard
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=taskboard-postgres;Port=5500;Username=${TASKBOARD_DB_USER};Password=${TASKBOARD_DB_PASSWORD};Database=taskboard;Pooling=true;MaxPoolSize=100;MinPoolSize=5;
+    depends_on:
+      taskboard-postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Frontend
+  frontend:
+    build: ./frontend
+    ports:
+      - "4200:4200"
+    # environment:
+    #   - NODE_ENV=${ASPNETCORE_ENVIRONMENT}
+    depends_on:
+      - taskboard-api
+    restart: unless-stopped
+
+volumes:
+  taskboard-db-data:

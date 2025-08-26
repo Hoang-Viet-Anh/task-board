@@ -1,0 +1,29 @@
+# Ignore build output
+**/bin/
+**/obj/
+
+# Ignore Rider/VS/VS Code files
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignore git and related
+.git/
+.gitignore
+
+# Ignore Docker files you don’t need
+Dockerfile.*
+docker-compose.*
+.dockerignore
+
+# Ignore logs
+*.log
+
+# Ignore envs (unless needed in container)
+*.env
+
+# Ignore node modules (if frontend exists)
+**/node_modules/

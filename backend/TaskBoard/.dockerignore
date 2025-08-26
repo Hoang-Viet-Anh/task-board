@@ -1,0 +1,13 @@
+bin/
+obj/
+*.user
+*.suo
+*.swp
+*.sln
+.vscode/
+.git/
+Dockerfile
+docker-compose*
+README.md
+.env
+*.log
