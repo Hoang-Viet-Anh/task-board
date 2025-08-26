@@ -1,5 +1,4 @@
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using MediatR;
 
 namespace TaskBoard;
@@ -28,7 +27,6 @@ public static class ConfigureServices
                 {
                     options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
                 });
-        services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssemblyContaining<ApiExceptionFilterAttribute>();
 
         return services;
