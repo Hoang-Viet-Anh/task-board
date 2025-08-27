@@ -18,7 +18,7 @@ services:
       start_period: 10s
 
   taskboard-api:
-    build: ./backend/TaskBoard
+    build: ./backend
     environment:
       - ConnectionStrings__DefaultConnection=Host=taskboard-postgres;Port=5500;Username=${TASKBOARD_DB_USER};Password=${TASKBOARD_DB_PASSWORD};Database=taskboard;Pooling=true;MaxPoolSize=100;MinPoolSize=5;
     depends_on:
@@ -26,13 +26,10 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-  # Frontend
   frontend:
     build: ./frontend
     ports:
       - "4200:4200"
-    # environment:
-    #   - NODE_ENV=${ASPNETCORE_ENVIRONMENT}
     depends_on:
       - taskboard-api
     restart: unless-stopped

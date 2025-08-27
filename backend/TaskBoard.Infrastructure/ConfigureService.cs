@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TaskBoard.Application.Common.Interfaces;
 using TaskBoard.Infrastructure.Persistence;
+using TaskBoard.Infrastructure.Services;
 
 namespace TaskBoard.Infrastructure;
 
@@ -19,6 +20,7 @@ public static class ConfigureServices
             }));
 
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+        services.AddScoped<IJwtProviderService, JwtProviderService>();
 
         return services;
     }
