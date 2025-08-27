@@ -1,18 +1,17 @@
-name: Docker Compose CI
+name: Docker Build CI
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
     branches: [ main ]
 
 jobs:
 
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
-    - name: Build the Docker Compose
-      run: docker compose build
+    - name: Build backend
+      run: docker build -f ./backend/Dockerfile -t taskboard:$(date +%s) ./backend
+    - name: Build frontend
+      run: docker build -f ./frontend/Dockerfile -t frontend:$(date +%s) ./frontend
