@@ -14,5 +14,10 @@ public class TaskConfiguration : IEntityTypeConfiguration<Domain.Entities.Task>
             .WithOne(l => l.Task)
             .HasForeignKey(l => l.TaskId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasMany(t => t.UserTasks)
+            .WithOne(ut => ut.Task)
+            .HasForeignKey(ut => ut.TaskId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

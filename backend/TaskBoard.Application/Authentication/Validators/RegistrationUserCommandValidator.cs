@@ -1,7 +1,7 @@
 using FluentValidation;
 using TaskBoard.Application.Authentication.Commands;
 
-namespace TaskBoard.Application.Common.Validators;
+namespace TaskBoard.Application.Authentication.Validators;
 
 public class RegistrationUserCommandValidator : AbstractValidator<RegistrationUserCommand>
 {

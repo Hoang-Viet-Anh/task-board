@@ -17,5 +17,13 @@ public class BoardConfiguration : IEntityTypeConfiguration<Board>
             .WithOne(c => c.Board)
             .HasForeignKey(c => c.BoardId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(b => b.UserBoards)
+            .WithOne(ub => ub.Board)
+            .HasForeignKey(ub => ub.BoardId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasIndex(b => b.InviteCode).IsUnique();
+        
     }
 }

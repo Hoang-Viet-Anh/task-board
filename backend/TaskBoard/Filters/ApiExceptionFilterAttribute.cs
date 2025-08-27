@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using FluentValidation;
 
+namespace TaskBoard.Filters;
+
 public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 {
     private readonly IDictionary<Type, Action<ExceptionContext>> _exceptionHandlers;
@@ -16,6 +18,7 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
                 { typeof(UnauthorizedAccessException), HandleUnauthorizedAccessException },
                 { typeof(BadRequestException), HandleBadRequestException },
                 { typeof(ConflictException), HandleConflictException },
+                { typeof(ForbiddenException), HandleForbiddenException },
                 { typeof(Exception), HandleUnknownException }
             };
     }
@@ -153,6 +156,24 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         context.Result = new ObjectResult(details)
         {
             StatusCode = StatusCodes.Status409Conflict
+        };
+
+        context.ExceptionHandled = true;
+    }
+
+    private void HandleForbiddenException(ExceptionContext context)
+    {
+        var details = new ProblemDetails
+        {
+            Status = StatusCodes.Status403Forbidden,
+            Title = "Forbidden",
+            Detail = context.Exception.Message,
+            Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.3"
+        };
+
+        context.Result = new ObjectResult(details)
+        {
+            StatusCode = StatusCodes.Status403Forbidden
         };
 
         context.ExceptionHandled = true;
