@@ -63,7 +63,7 @@ public class BoardController : ControllerBase
         return Ok(boards);
     }
 
-    [HttpPost("{boardId}/leave")]
+    [HttpDelete("leave/{boardId}")]
     public async Task<IActionResult> LeaveBoard(Guid boardId)
     {
         var userId = _currentUserService.GetUserId();
@@ -72,7 +72,7 @@ public class BoardController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("{inviteCode}/join")]
+    [HttpPost("join/{inviteCode}")]
     public async Task<IActionResult> JoinBoard(string inviteCode)
     {
         var userId = _currentUserService.GetUserId();

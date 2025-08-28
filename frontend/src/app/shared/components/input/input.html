@@ -1,0 +1,8 @@
+<div (click)="focusInput()">
+    <app-card [class]="'py-2.5 px-2.5 flex-row gap-1 w-full focus-within:border-primary transition-all duration-200 cursor-text'">
+        <ng-content select="[startIcon]"></ng-content>
+        <input #inputElement [type]="type" [value]="value" (change)="onChange($event)"
+            class="focus-visible:outline-none text-sm flex-1" />
+        <ng-content select="[endIcon]"></ng-content>
+    </app-card>
+</div>

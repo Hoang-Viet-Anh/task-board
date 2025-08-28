@@ -1,4 +1,4 @@
-using TaskBoard.Application.Common.Dtos;
+using TaskBoard.Application.Authentication.Commands.RefreshToken;
 using TaskBoard.Domain.Entities;
 
 namespace TaskBoard.Application.Common.Interfaces;

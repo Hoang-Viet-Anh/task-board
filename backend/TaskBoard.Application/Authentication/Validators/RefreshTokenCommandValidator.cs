@@ -1,5 +1,5 @@
 using FluentValidation;
-using TaskBoard.Application.Authentication.Commands;
+using TaskBoard.Application.Authentication.Commands.RefreshToken;
 
 namespace TaskBoard.Application.Authentication.Validators;
 

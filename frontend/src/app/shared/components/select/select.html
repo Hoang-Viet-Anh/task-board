@@ -1,0 +1,22 @@
+<app-dropdown-menu [open]="open()" (onClose)="toggleSelect(false)">
+    <app-button dropdownTrigger variant="outline" (clicked)="toggleSelect()"
+        [class]="'flex flex-row gap-2 justify-between items-center !px-3 ' + class">
+        <p>{{value?.title ?? title}}</p>
+        <lucide-icon [img]="ChevronDown" [size]="20" [ngClass]="{
+            'transition-all duration-100 stroke-primary': true,
+        }">
+        </lucide-icon>
+    </app-button>
+    <div dropdownContent [ngClass]="[
+        'flex flex-col',
+        class
+    ]">
+        @for (item of items; track item.value) {
+        @if (item.value !== value?.value) {
+        <app-button variant="ghost" (clicked)="selectItem(item)" [class]="'w-full !rounded-none'">
+            {{item.title}}
+        </app-button>
+        }
+        }
+    </div>
+</app-dropdown-menu>

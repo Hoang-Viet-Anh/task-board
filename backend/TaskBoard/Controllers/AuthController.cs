@@ -1,6 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using TaskBoard.Application.Authentication.Commands;
+using TaskBoard.Application.Authentication.Commands.Login;
+using TaskBoard.Application.Authentication.Commands.RefreshToken;
+using TaskBoard.Application.Authentication.Commands.Register;
 
 namespace TaskBoard.Controllers;
 

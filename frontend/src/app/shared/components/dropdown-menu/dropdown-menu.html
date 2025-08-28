@@ -1,0 +1,20 @@
+<div class="relative">
+    <div #trigger>
+        <ng-content select="[dropdownTrigger]"></ng-content>
+    </div>
+
+    <div [ngClass]="{
+        'fixed inset-0 z-10': true,
+        'pointer-events-auto': open,
+        'pointer-events-none': !open,
+    }" (click)="closeDropdown()">
+        <div #dropdown [ngClass]="[
+        'absolute transition-all duration-100 bg-white rounded-xl',
+        open ? 'pointer-events-auto translate-0 opacity-100' : (placement === 'bottom' ? 'pointer-events-none -translate-y-2 opacity-0' : 'pointer-events-none translate-y-2 opacity-0'),
+        ]" (click)="onDropdownClick($event)">
+            <app-card>
+                <ng-content select="[dropdownContent]"></ng-content>
+            </app-card>
+        </div>
+    </div>
+</div>

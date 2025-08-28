@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using TaskBoard.Application.Common.Dtos;
+using TaskBoard.Application.Authentication.Commands.RefreshToken;
 using TaskBoard.Application.Common.Interfaces;
 using TaskBoard.Domain.Entities;
 
