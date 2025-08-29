@@ -45,7 +45,7 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine($"Failed to apply migrations: {e}");
     }
 }
-
+app.UseCors("Frontend");
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

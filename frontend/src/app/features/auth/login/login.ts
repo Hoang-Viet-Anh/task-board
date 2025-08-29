@@ -1,57 +1,63 @@
 import { Component, signal } from '@angular/core';
-import { Button } from "@app/shared/components/button/button";
-import { Badge } from "@app/shared/components/badge/badge";
 import { Card } from "@app/shared/components/card/card";
-import { DropdownMenu } from "@app/shared/components/dropdown-menu/dropdown-menu";
-import { Drawer } from "@app/shared/components/drawer/drawer";
-import { Dialog } from "@app/shared/components/dialog/dialog";
+import { Eye, EyeOff, LoaderCircle, LucideAngularModule } from "lucide-angular";
+import { FormControl, ReactiveFormsModule, FormGroup, Validators } from "@angular/forms"
 import { InputComponent } from "@app/shared/components/input/input";
-import { EyeOff, LucideAngularModule } from "lucide-angular";
-import { Select } from "@app/shared/components/select/select";
-import { SelectItem } from '@app/shared/components/select/models/select-item.model';
-import { Separator } from "@app/shared/components/separator/separator";
+import { Button } from "@app/shared/components/button/button";
+import { RouterModule } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { map, Observable } from 'rxjs';
+import { selectLoginStatus } from './store/login.selectors';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import { performLogin } from './store/login.actions';
 
 @Component({
   selector: 'app-login',
-  imports: [Button, Badge, Card, DropdownMenu, Drawer, Dialog, InputComponent, LucideAngularModule, Select, Separator],
+  imports: [LucideAngularModule, Card, ReactiveFormsModule, InputComponent, Button, RouterModule, AsyncPipe, CommonModule],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
 export class Login {
   readonly EyeOff = EyeOff
+  readonly Eye = Eye
+  readonly LoaderCircle = LoaderCircle
 
-  dropdownOpen = signal<boolean>(false);
-  drawerOpen = signal<boolean>(false);
-  dialogOpen = signal<boolean>(false);
-  inputValue = signal<string>('');
-  selectValue = signal<SelectItem>({
-    value: "todo",
-    title: "To Do"
+  loginForm: FormGroup = new FormGroup({
+    username: new FormControl('', Validators.required),
+    password: new FormControl('', Validators.required)
   });
-  selectItems: SelectItem[] = [
-    { value: 'todo', title: 'To Do' },
-    { value: 'inprogress', title: 'In Progress' },
-    { value: 'done', title: 'Done' },
-    { value: 'archived', title: 'Archived' }
-  ];
 
-  onValueChange(value: string) {
-    this.inputValue.set(value)
+  isPasswordVisible = signal<boolean>(false)
+  isLoading$: Observable<boolean>
+  error$: Observable<string | undefined>
+
+  constructor(private readonly store: Store) {
+    this.isLoading$ = this.store.select(selectLoginStatus).pipe(map(status => status?.isLoading))
+    this.error$ = this.store.select(selectLoginStatus).pipe(map(status => status?.error))
   }
 
-  onDialogClick(state?: boolean) {
-    this.dialogOpen.set(state ?? !this.dialogOpen())
+  onSubmit() {
+    if (this.loginForm.valid) {
+      console.log(this.loginForm.value);
+      this.store.dispatch(performLogin(this.loginForm.value))
+    } else {
+      this.loginForm.markAllAsTouched()
+    }
   }
 
-  onDropdownClick(state?: boolean) {
-    this.dropdownOpen.set(state ?? !this.dropdownOpen())
+  onUsernameChange(value: string) {
+    this.loginForm.patchValue({ username: value })
   }
 
-  onDrawerClick(state?: boolean) {
-    this.drawerOpen.set(state ?? !this.drawerOpen())
+  onPasswordChange(value: string) {
+    this.loginForm.patchValue({ password: value })
   }
 
-  onSelectedValue(item: SelectItem) {
-    this.selectValue.set(item)
+  togglePasswordVisibility() {
+    this.isPasswordVisible.set(!this.isPasswordVisible())
+  }
+
+  getErrorField(field: string, validator: string) {
+    return this.loginForm.get(field)?.errors?.[validator]
   }
 }

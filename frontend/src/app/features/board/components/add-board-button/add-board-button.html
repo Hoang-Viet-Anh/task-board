@@ -1,0 +1,15 @@
+<app-button variant="ghost" [class]="'!p-0 rounded-xl'" (clicked)="toggleBoardDialog()">
+    <app-card [class]="'flex flex-col gap-2 items-center justify-center w-3xs h-40 p-4 border-dotted !border-2'">
+        <lucide-icon [img]="Plus" class="stroke-primary"></lucide-icon>
+        <p class="select-none text-primary text-sm">Create or Join board</p>
+    </app-card>
+</app-button>
+<app-dialog [open]="addBoardDialogOpen()" (onClose)="toggleBoardDialog(false)">
+    <div dialogContent class="flex flex-col items-center gap-4 w-96">
+        <app-create-board class="w-full"></app-create-board>
+
+        <app-separator class="w-full my-4"></app-separator>
+
+        <app-join-board class="w-full"></app-join-board>
+    </div>
+</app-dialog>

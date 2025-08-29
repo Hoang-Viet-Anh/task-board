@@ -12,6 +12,9 @@ export class InputComponent {
   @Input() type: string = 'text';
   @Input() disabled: boolean = false;
   @Input() value: string = '';
+  @Input() id: string = '';
+  @Input() name: string = '';
+  @Input() placeholder: string = '';
 
   @Output() onValueChange = new EventEmitter<string>();
   @ViewChild('inputElement') inputElement!: ElementRef<HTMLInputElement>;

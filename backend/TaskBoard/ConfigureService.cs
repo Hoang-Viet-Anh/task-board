@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using TaskBoard.Application.Common.Exceptions;
 using TaskBoard.Application.Common.Interfaces;
 using TaskBoard.Filters;
+using TaskBoard.Infrastructure.Services;
 using TaskBoard.Services;
 
 namespace TaskBoard;
@@ -52,6 +53,18 @@ public static class ConfigureServices
                 ValidIssuer = issuer,
                 ValidAudience = audience,
                 ClockSkew = TimeSpan.Zero
+            };
+
+            o.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    if (context.Request.Cookies.ContainsKey(JwtProviderService.AccessTokenKey))
+                    {
+                        context.Token = context.Request.Cookies[JwtProviderService.AccessTokenKey];
+                    }
+                    return Task.CompletedTask;
+                }
             };
         });
 

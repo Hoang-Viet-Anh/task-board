@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using TaskBoard.Application.Authentication.Commands.RefreshToken;
@@ -16,6 +17,8 @@ public class JwtProviderService : IJwtProviderService
     public readonly IApplicationDbContext _context;
     public const int RefreshTokenExpirationInDays = 1;
     public const int AccessTokenExpirationInMinutes = 5;
+    public const string AccessTokenKey = "access_token";
+    public const string RefreshTokenKey = "refresh_token";
 
     public JwtProviderService(IConfiguration configuration, IApplicationDbContext context)
     {
@@ -62,5 +65,30 @@ public class JwtProviderService : IJwtProviderService
         await _context.SaveChangesAsync(cancellationToken);
 
         return new TokenResponse(accessToken, refreshToken);
+    }
+
+    public void SetJwtCookies(TokenResponse tokens, HttpResponse response)
+    {
+        response.Cookies.Append(AccessTokenKey, tokens.AccessToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = false,
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTimeOffset.UtcNow.AddMinutes(AccessTokenExpirationInMinutes)
+        });
+
+        response.Cookies.Append(RefreshTokenKey, tokens.RefreshToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = false,
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTimeOffset.UtcNow.AddDays(RefreshTokenExpirationInDays)
+        });
+    }
+
+    public void ClearJwtCookies(HttpResponse response)
+    {
+        response.Cookies.Delete(AccessTokenKey);
+        response.Cookies.Delete(RefreshTokenKey);
     }
 }

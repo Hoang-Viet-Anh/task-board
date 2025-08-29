@@ -47,6 +47,9 @@ namespace TaskBoard.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("InviteCode")
+                        .IsUnique();
+
                     b.HasIndex("OwnerId");
 
                     b.ToTable("Boards");

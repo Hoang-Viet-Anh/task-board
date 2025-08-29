@@ -1,1 +1,12 @@
-<p>header works!</p>
+<header class="flex flex-row items-center justify-center w-screen p-8">
+    <div class="flex w-full max-w-7xl items-center justify-between">
+        <h1 class="text-xl font-semibold select-none" routerLink="">
+            TaskBoard
+        </h1>
+        <app-button variant="ghost" [class]="'!p-2 flex-row items-center justify-center gap-2'" (clicked)="onLogout()">
+            <lucide-icon [img]="Logout" [size]="20" class="mt-0.5"></lucide-icon>
+            Logout
+        </app-button>
+    </div>
+</header>
+<router-outlet></router-outlet>

@@ -1,79 +1,52 @@
-<div class="w-screen h-screen flex flex-col gap-6 items-center justify-center overflow-y-auto">
-    <div class="flex flex-row gap-6">
-        <app-button>Login</app-button>
-        <app-button variant="secondary">Login</app-button>
-        <app-button variant="outline">Login</app-button>
-        <app-button variant="ghost">Login</app-button>
-        <app-button variant="link">Login</app-button>
-        <app-button variant="destruction">Login</app-button>
-    </div>
-
-    <div class="flex flex-row gap-6">
-        <app-badge class="flex-row items-center gap-2">
-            <div class="flex rounded-full h-2 w-2 bg-primary/70 mt-1"></div>
-            Low
-        </app-badge>
-        <app-badge class="flex-row items-center gap-2">
-            <div class="flex rounded-full h-2 w-2 bg-primary/70 mt-1"></div>
-            Medium
-        </app-badge>
-        <app-badge class="flex-row items-center gap-2">
-            <div class="flex rounded-full h-2 w-2 bg-primary/70 mt-1"></div>
-            High
-        </app-badge>
-    </div>
-
-    <div class="flex flex-row gap-6">
-        <app-card class="p-4">
-            Card Name
-        </app-card>
-    </div>
-    <div class="flex flex-col gap-6">
-        <app-drawer [open]="drawerOpen()" (onClose)="onDrawerClick(false)">
-            <app-button drawerTrigger variant="outline" (clicked)="onDrawerClick(true)">
-                Drawer
-            </app-button>
-        </app-drawer>
-    </div>
-    <div class="flex flex-col gap-6">
-        <app-dialog [open]="dialogOpen()" (onClose)="onDialogClick(false)">
-            <app-button dialogTrigger variant="outline" (clicked)="onDialogClick()">
-                Dialog
-            </app-button>
-        </app-dialog>
-    </div>
-
-    <div class="flex flex-col gap-6">
-        <app-dropdown-menu [open]="dropdownOpen()" (onClose)="onDropdownClick(false)">
-            <app-button dropdownTrigger variant="ghost" (clicked)="onDropdownClick()"
-                [class]="'w-3xs'">Dropdown</app-button>
-            <div dropdownContent class="flex flex-col w-3xs">
-                <app-button variant="ghost" class="w-full">
-                    Edit
-                </app-button>
-                <app-button variant="ghost" class="w-full">
-                    Delete
-                </app-button>
+<div class="flex flex-col w-screen h-screen items-center justify-center">
+    <app-card [class]="'flex flex-col gap-6 items-center justify-start p-4 w-96'">
+        <h1 class="font-semibold text-lg">Sign in</h1>
+        <form [formGroup]="loginForm" class="flex flex-col gap-6 w-full">
+            <div class="flex flex-col gap-1">
+                <app-input id="username" placeholder="username" type="text" [value]="loginForm.get('username')?.value"
+                    [disabled]="(isLoading$ | async) ?? false" (onValueChange)="onUsernameChange($event)"></app-input>
+                @if (loginForm.get('username')?.touched && getErrorField('username', 'required')) {
+                <small class="text-destructive">
+                    username is required
+                </small>
+                }
             </div>
-        </app-dropdown-menu>
-    </div>
 
-    <div class="flex flex-col gap-6">
-        <app-input [value]="inputValue()" (onValueChange)="onValueChange($event)">
-            <lucide-icon endIcon [img]="EyeOff" [size]="20" class="stroke-primary"></lucide-icon>
-        </app-input>
-    </div>
+            <div class="flex flex-col gap-1">
+                <app-input id="password" placeholder="********" [type]="isPasswordVisible() ? 'text' : 'password'"
+                    [disabled]="(isLoading$ | async) ?? false" [value]="loginForm.get('password')?.value"
+                    (onValueChange)="onPasswordChange($event)">
+                    <div endIcon (click)="togglePasswordVisibility()">
+                        <lucide-icon [img]="isPasswordVisible() ? Eye : EyeOff" [size]="20"
+                            class="stroke-primary cursor-auto"></lucide-icon>
+                    </div>
+                </app-input>
+                @if (loginForm.get('password')?.touched && getErrorField('password', 'required')) {
+                <small class="text-destructive">
+                    password is required
+                </small>
+                }
+            </div>
 
-    <div class="flex flex-col gap-6">
-        <app-select title="Move To" [value]="selectValue()" [items]="selectItems" (onSelected)="onSelectedValue($event)"
-            [class]="'w-3xs'">
-        </app-select>
-    </div>
+            <p class="text-destructive text-sm" *ngIf="(error$ | async) as error">
+                {{error}}
+            </p>
 
-    <div class="flex flex-col gap-6 w-3xs h-28">
-        <app-separator orientation="vertical" class="h-full">
-        </app-separator>
-        <app-separator orientation="horizontal">
-        </app-separator>
-    </div>
+            <app-button [class]="'flex items-center justify-center w-full'" (clicked)="onSubmit()"
+                [disabled]="(isLoading$ | async) ?? false">
+                @if (isLoading$ | async) {
+                <lucide-icon [img]="LoaderCircle" [size]="24" class="animate-spin"></lucide-icon>
+                }
+                @else {
+                Sign in
+                }
+            </app-button>
+        </form>
+        <div class="flex flex-row gap-2">
+            <span>Don't have an account?</span>
+            <app-button variant="link" [class]="'!p-0'" routerLink="/signup">
+                Sign up
+            </app-button>
+        </div>
+    </app-card>
 </div>

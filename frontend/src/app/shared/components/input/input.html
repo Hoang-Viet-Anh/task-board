@@ -1,8 +1,14 @@
-<div (click)="focusInput()">
-    <app-card [class]="'py-2.5 px-2.5 flex-row gap-1 w-full focus-within:border-primary transition-all duration-200 cursor-text'">
+<div (click)="focusInput()" [ngClass]="{
+    'rounded-xl transition-all duration-100': true,
+    'opacity-50 pointer-events-none': disabled,
+    'opacity-100 pointer-events-auto': !disabled
+}">
+    <app-card
+        [class]="'py-2.5 px-2.5 flex-row gap-1 w-full focus-within:border-primary transition-all duration-200 cursor-text'">
         <ng-content select="[startIcon]"></ng-content>
-        <input #inputElement [type]="type" [value]="value" (change)="onChange($event)"
-            class="focus-visible:outline-none text-sm flex-1" />
+        <input #inputElement [name]="name" [id]="id" [placeholder]="placeholder" [type]="type" [value]="value"
+            [disabled]="disabled" (input)="onChange($event)"
+            class="focus-visible:outline-none text-sm flex-1 placeholder:text-primary" />
         <ng-content select="[endIcon]"></ng-content>
     </app-card>
 </div>

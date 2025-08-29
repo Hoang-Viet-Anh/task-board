@@ -12,22 +12,37 @@ export class ApiService {
     constructor(public readonly http: HttpClient) { }
 
     get<T>(endpoint: string, options?: object): Observable<T> {
-        return this.http.get<T>(`${this.apiUrl}${endpoint}`, options);
+        return this.http.get<T>(`${this.apiUrl}${endpoint}`, {
+            withCredentials: true,
+            ...options
+        },);
     }
 
     post<T>(endpoint: string, body: any, options?: object): Observable<T> {
-        return this.http.post<T>(`${this.apiUrl}${endpoint}`, body, options);
+        return this.http.post<T>(`${this.apiUrl}${endpoint}`, body, {
+            withCredentials: true,
+            ...options
+        });
     }
 
     put<T>(endpoint: string, body: any, options?: object): Observable<T> {
-        return this.http.put<T>(`${this.apiUrl}${endpoint}`, body, options);
+        return this.http.put<T>(`${this.apiUrl}${endpoint}`, body, {
+            withCredentials: true,
+            ...options
+        });
     }
 
     delete<T>(endpoint: string, options?: object): Observable<T> {
-        return this.http.delete<T>(`${this.apiUrl}${endpoint}`, options);
+        return this.http.delete<T>(`${this.apiUrl}${endpoint}`, {
+            withCredentials: true,
+            ...options
+        });
     }
 
     patch<T>(endpoint: string, body: any, options?: object): Observable<T> {
-        return this.http.patch<T>(`${this.apiUrl}${endpoint}`, body, options);
+        return this.http.patch<T>(`${this.apiUrl}${endpoint}`, body, {
+            withCredentials: true,
+            ...options
+        });
     }
 }
