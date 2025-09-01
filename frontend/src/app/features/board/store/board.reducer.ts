@@ -12,7 +12,7 @@ export interface BoardState {
 
 export const initialBoardState: BoardState = {
     getBoardsStatus: {
-        isLoading: false,
+        isLoading: true,
         isSuccess: false
     },
     updateBoardStatus: {

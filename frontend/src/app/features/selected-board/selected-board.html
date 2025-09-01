@@ -1,0 +1,11 @@
+<div class="flex flex-row w-full max-w-7xl justify-between items-center">
+    <h1 class="font-semibold text-2xl">Title</h1>
+    <app-button variant="outline" [class]="'flex flex-row gap-2 justify-center'">
+        <lucide-icon [img]="History" [size]="20" class="mt-0.5"></lucide-icon>
+        <p>History</p>
+    </app-button>
+</div>
+
+<div class="flex flex-row gap-4 w-full h-full max-w-8xl overflow-auto">
+    <app-task-list></app-task-list>
+</div>

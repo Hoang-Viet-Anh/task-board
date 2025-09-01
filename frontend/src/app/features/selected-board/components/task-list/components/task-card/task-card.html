@@ -1,0 +1,21 @@
+<app-card [class]="'flex flex-col p-4 gap-4'">
+    <div class="flex flex-row items-center justify-between w-full">
+        <h2 class="font-medium text-lg">Card Title</h2>
+        <app-button variant="ghost" [class]="'!p-2 !rounded-full'">
+            <lucide-icon [img]="EllipsisVertical" [size]="20"></lucide-icon>
+        </app-button>
+    </div>
+    <p class="break-words text-primary">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer malesuada dapibus lectus, at congue metus
+        aliquam eget. Nam sit amet eleifend neque.
+    </p>
+    <div class="flex flex-row gap-2 items-center">
+        <lucide-icon [img]="Calendar"></lucide-icon>
+        <p class="text-primary font-semibold">Wed, 19 Apr</p>
+    </div>
+    <app-badge [class]="'flex-row items-center pl-1.5 pr-2.5'">
+        <lucide-icon [img]="Dot" [size]="24" class="dot-icon"></lucide-icon>
+        <p class="mb-0.5">High</p>
+    </app-badge>
+    <app-change-list-dropdown></app-change-list-dropdown>
+</app-card>

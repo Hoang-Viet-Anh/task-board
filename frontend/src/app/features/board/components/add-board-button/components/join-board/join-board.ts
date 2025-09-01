@@ -24,11 +24,15 @@ export class JoinBoard {
   })
 
   isLoading$: Observable<boolean>;
-  error$: Observable<string | undefined>;
+  isSuccess$: Observable<boolean>;
 
   constructor(private readonly store: Store) {
     this.isLoading$ = this.store.select(selectJoinBoardStatus).pipe(map(status => status?.isLoading))
-    this.error$ = this.store.select(selectJoinBoardStatus).pipe(map(status => status?.error))
+    this.isSuccess$ = this.store.select(selectJoinBoardStatus).pipe(map(status => status?.isSuccess))
+
+    this.isSuccess$.subscribe(success => {
+      if (success) this.joinBoardForm.patchValue({ inviteCode: '' })
+    })
   }
 
   onJoinSubmit() {

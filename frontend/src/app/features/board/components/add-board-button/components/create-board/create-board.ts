@@ -9,8 +9,6 @@ import { createBoard } from '../../store/add-board.actions';
 import { map, Observable } from 'rxjs';
 import { selectAddBoardStatus } from '../../store/add-board.selectors';
 
-
-
 @Component({
   selector: 'app-create-board',
   imports: [Button, CommonModule, LucideAngularModule, InputComponent, ReactiveFormsModule],
@@ -25,11 +23,15 @@ export class CreateBoard {
   })
 
   isLoading$: Observable<boolean>;
-  error$: Observable<string | undefined>;
+  isSuccess$: Observable<boolean>;
 
   constructor(private readonly store: Store) {
     this.isLoading$ = this.store.select(selectAddBoardStatus).pipe(map(status => status?.isLoading))
-    this.error$ = this.store.select(selectAddBoardStatus).pipe(map(status => status?.error))
+    this.isSuccess$ = this.store.select(selectAddBoardStatus).pipe(map(status => status?.isSuccess))
+
+    this.isSuccess$.subscribe(success => {
+      if (success) this.createBoardForm.patchValue({ boardTitle: '' })
+    })
   }
 
   onCreateSubmit() {

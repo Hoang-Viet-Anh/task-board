@@ -77,10 +77,6 @@
                 }
             </div>
 
-            <p class="text-destructive text-sm" *ngIf="(error$ | async) as error">
-                {{error}}
-            </p>
-
             <app-button [class]="'flex items-center justify-center w-full'" (clicked)="onSubmit()"
                 [disabled]="(isLoading$ | async) ?? false">
                 @if (isLoading$ | async) {

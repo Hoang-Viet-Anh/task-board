@@ -7,6 +7,7 @@ using TaskBoard.Application.Boards.Commands.LeaveBoard;
 using TaskBoard.Application.Boards.Commands.UpdateBoard;
 using TaskBoard.Application.Boards.Queries.GetAllBoards;
 using TaskBoard.Application.Boards.Queries.GetBoardById;
+using TaskBoard.Application.Common.Dtos;
 using TaskBoard.Application.Common.Interfaces;
 
 namespace TaskBoard.Controllers;
@@ -36,10 +37,10 @@ public class BoardController : ControllerBase
     }
 
     [HttpPost("update")]
-    public async Task<IActionResult> UpdateBoard([FromBody] UpdateBoardRequest request)
+    public async Task<IActionResult> UpdateBoard([FromBody] BoardDto boardDto)
     {
         var userId = _currentUserService.GetUserId();
-        var command = new UpdateBoardCommand(userId, request);
+        var command = new UpdateBoardCommand(userId, boardDto);
         await _mediator.Send(command);
         return Ok();
     }

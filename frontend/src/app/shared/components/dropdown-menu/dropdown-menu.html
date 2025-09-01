@@ -1,8 +1,8 @@
+@if (isLoaded()) {
 <div class="relative">
     <div #trigger>
         <ng-content select="[dropdownTrigger]"></ng-content>
     </div>
-
     <div [ngClass]="{
         'fixed inset-0 z-10': true,
         'pointer-events-auto': open,
@@ -18,3 +18,4 @@
         </div>
     </div>
 </div>
+}

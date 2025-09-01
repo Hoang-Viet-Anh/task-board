@@ -9,11 +9,6 @@
         </small>
         }
     </div>
-    @if (error$ | async) {
-    <small class="text-destructive">
-        {{error$ | async}}
-    </small>
-    }
     <app-button class="w-full" [class]="'justify-center'" (clicked)="onCreateSubmit()"
         [disabled]="(isLoading$ | async) ?? false">
         @if (isLoading$ | async) {

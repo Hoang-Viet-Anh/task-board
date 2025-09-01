@@ -17,6 +17,9 @@ import { HeaderEffect } from '@app/layout/header/store/header.effects';
 import { addBoardFeatureKey } from '@app/features/board/components/add-board-button/store/add-board.selectors';
 import { addBoardReducer } from '@app/features/board/components/add-board-button/store/add-board.reducer';
 import { AddBoardEffects } from '@app/features/board/components/add-board-button/store/add-board.effects';
+import { BoardEffects } from '@app/features/board/store/board.effects';
+import { boardFeatureKey } from '@app/features/board/store/board.selectors';
+import { boardReducer } from '@app/features/board/store/board.reducer';
 
 export const CORE_PROVIDERS = [
   provideHttpClient(withInterceptorsFromDi()),
@@ -30,10 +33,11 @@ export const CORE_PROVIDERS = [
     useClass: AuthInterceptor,
     multi: true,
   },
-  provideEffects([RegisterEffects, LoginEffects, HeaderEffect, AddBoardEffects]),
+  provideEffects([RegisterEffects, LoginEffects, HeaderEffect, AddBoardEffects, BoardEffects]),
   provideStore({
     [loginFeatureKey]: loginReducer,
     [registerFeatureKey]: registerReducer,
-    [addBoardFeatureKey]: addBoardReducer
+    [addBoardFeatureKey]: addBoardReducer,
+    [boardFeatureKey]: boardReducer
   })
 ];

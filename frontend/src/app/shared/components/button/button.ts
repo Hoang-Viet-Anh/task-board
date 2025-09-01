@@ -8,7 +8,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrl: './button.css'
 })
 export class Button {
-  @Input() variant: 'primary' | 'secondary' | 'outline' | 'ghost' | 'icon' | 'link' | 'destruction' = 'primary';
+  @Input() variant: 'primary' | 'secondary' | 'outline' | 'ghost' | 'link' | 'destruction' = 'primary';
   @Input() disabled: boolean = false;
   @Input() class: string = '';
 

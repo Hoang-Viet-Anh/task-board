@@ -1,0 +1,42 @@
+@if (board) {
+<div class="relative">
+    <app-button variant="ghost" [class]="'!p-0 rounded-xl'" (clicked)="navigateToBoard(board.id)">
+        <app-card [class]="'flex items-center justify-center w-56 h-32 p-4'">
+            <p class="select-none line-clamp-2 break-all w-full">{{board.title}}</p>
+        </app-card>
+    </app-button>
+
+    <app-dropdown-menu class="absolute right-0.5 top-0.5 z-10" [open]="openDropdown()"
+        (onClose)="toggleDropdown(false)">
+        <app-button dropdownTrigger variant="ghost" [class]="'!p-2 !rounded-full'" (clicked)="toggleDropdown()">
+            <lucide-icon [img]="EllipsisVertical" [size]="20"></lucide-icon>
+        </app-button>
+        <div dropdownContent class="flex flex-col">
+            <app-button variant="ghost" [class]="'flex flex-row gap-2 items-center w-full !rounded-none'"
+                (clicked)="toggleDialog(true, true)">
+                <lucide-icon [img]="Pencil" [size]="20"></lucide-icon>
+                <p>Edit</p>
+            </app-button>
+            <app-button variant="ghost" [class]="'flex flex-row gap-2 items-center w-full !rounded-none'"
+                (clicked)="toggleDialog(true, false)">
+                <lucide-icon [img]="Trash" [size]="20" class="stroke-destructive"></lucide-icon>
+                <p class="text-destructive">Remove</p>
+            </app-button>
+        </div>
+    </app-dropdown-menu>
+</div>
+
+<app-dialog [open]="openDialog()" (onClose)="toggleDialog(false)">
+
+    <div dialogContent class="flex flex-col items-center gap-4 w-96">
+        @if (isEditContent()) {
+        <app-edit-board [board]="board" class="w-full"></app-edit-board>
+        }
+        @else {
+        <app-remove-board [board]="board" class="w-full" (onClose)="toggleDialog(false)"></app-remove-board>
+        }
+    </div>
+
+</app-dialog>
+
+}

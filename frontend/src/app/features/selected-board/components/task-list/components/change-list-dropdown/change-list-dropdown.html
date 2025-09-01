@@ -1,0 +1,15 @@
+<app-dropdown-menu [open]="open()" (onClose)="toggleDropdown(false)">
+    <app-button dropdownTrigger variant="secondary" [class]="'flex flex-row items-center justify-between w-full'"
+        (clicked)="toggleDropdown()">
+        <p>Move To</p>
+        <lucide-icon [img]="ChevronDown" [size]="20"></lucide-icon>
+    </app-button>
+    <div dropdownContent class="flex flex-col w-3xs">
+        <app-button variant="ghost" [class]="'w-full !rounded-none'">
+            To Do
+        </app-button>
+        <app-button variant="ghost" [class]="'w-full !rounded-none'">
+            Done
+        </app-button>
+    </div>
+</app-dropdown-menu>

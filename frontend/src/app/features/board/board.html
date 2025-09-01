@@ -1,8 +1,8 @@
 <div class="flex flex-wrap w-full max-w-7xl gap-10">
-    <app-button variant="ghost" [class]="'!p-0 rounded-xl'">
-        <app-card [class]="'flex items-center justify-center w-3xs h-40 p-4'">
-            <p class="select-none">Card Name</p>
-        </app-card>
-    </app-button>
+    @if (isClient()) {
+    @for (board of (boards$ | async); track board.id) {
+    <app-board-card [board]="board"></app-board-card>
+    }
     <app-add-board-button></app-add-board-button>
+    }
 </div>

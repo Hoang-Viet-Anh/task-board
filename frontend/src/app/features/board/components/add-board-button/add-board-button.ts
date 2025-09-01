@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { Button } from "@app/shared/components/button/button";
 import { LucideAngularModule, Plus } from "lucide-angular";
 import { CommonModule } from '@angular/common';
@@ -10,6 +10,7 @@ import { createBoardSuccess, joinBoardSuccess } from './store/add-board.actions'
 import { ReactiveFormsModule } from '@angular/forms';
 import { CreateBoard } from "./components/create-board/create-board";
 import { JoinBoard } from "./components/join-board/join-board";
+import { NavigationStart, Router } from '@angular/router';
 
 @Component({
   selector: 'app-add-board-button',
@@ -22,7 +23,9 @@ export class AddBoardButton {
 
   addBoardDialogOpen = signal<boolean>(false)
 
-  constructor(private actions$: Actions) {
+  constructor(
+    private actions$: Actions,
+  ) {
     this.actions$.pipe(ofType(createBoardSuccess, joinBoardSuccess)).subscribe(() => {
       this.toggleBoardDialog(false)
     })

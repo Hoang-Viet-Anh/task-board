@@ -26,6 +26,7 @@ public class GetAllBoardsQueryHandler : IRequestHandler<GetAllBoardsQuery, List<
             .Where(ub => ub.UserId == user.Id)
             .Include(ub => ub.Board)
             .Select(ub => ub.Board)
+            .OrderBy(ub => ub.CreatedAt)
             .ToListAsync(cancellationToken: cancellationToken);
 
         var userBoardsDto = _mapper.Map<List<BoardDto>>(userBoards);

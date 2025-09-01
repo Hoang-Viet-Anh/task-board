@@ -50,7 +50,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("logout")]
-    public async Task<IActionResult> Logout()
+    public IActionResult Logout()
     {
         _jwtProviderService.ClearJwtCookies(Response);
         return Ok();

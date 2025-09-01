@@ -29,16 +29,22 @@ export class Login {
 
   isPasswordVisible = signal<boolean>(false)
   isLoading$: Observable<boolean>
-  error$: Observable<string | undefined>
+  isSuccess$: Observable<boolean>
 
   constructor(private readonly store: Store) {
     this.isLoading$ = this.store.select(selectLoginStatus).pipe(map(status => status?.isLoading))
-    this.error$ = this.store.select(selectLoginStatus).pipe(map(status => status?.error))
+    this.isSuccess$ = this.store.select(selectLoginStatus).pipe(map(status => status?.isSuccess))
+
+    this.isSuccess$.subscribe(success => {
+      if (success) this.loginForm.patchValue({
+        username: '',
+        password: ''
+      })
+    })
   }
 
   onSubmit() {
     if (this.loginForm.valid) {
-      console.log(this.loginForm.value);
       this.store.dispatch(performLogin(this.loginForm.value))
     } else {
       this.loginForm.markAllAsTouched()

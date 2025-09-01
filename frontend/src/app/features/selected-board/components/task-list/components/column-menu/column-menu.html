@@ -1,0 +1,13 @@
+<app-dropdown-menu [open]="open()" (onClose)="toggleDropdown(false)">
+    <app-button dropdownTrigger variant="ghost" [class]="'!p-2 !rounded-full mt-0.5'" (clicked)="toggleDropdown()">
+        <lucide-icon [img]="EllipsisVertical" [size]="20"></lucide-icon>
+    </app-button>
+    <div dropdownContent class="flex flex-col w-3xs">
+        <app-button variant="ghost" [class]="'w-full !rounded-none'">
+            To Do
+        </app-button>
+        <app-button variant="ghost" [class]="'w-full !rounded-none'">
+            Done
+        </app-button>
+    </div>
+</app-dropdown-menu>

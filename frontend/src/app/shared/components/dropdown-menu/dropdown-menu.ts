@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, Output, PLATFORM_ID, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, Output, PLATFORM_ID, signal, ViewChild } from '@angular/core';
 import { Card } from "../card/card";
 import { computePosition, flip, offset, autoUpdate } from '@floating-ui/dom';
 
@@ -16,6 +16,7 @@ export class DropdownMenu implements AfterViewInit, OnDestroy {
   @ViewChild('dropdown') dropdown!: ElementRef<HTMLDivElement>;
 
   placement: 'top' | 'bottom' = 'bottom';
+  isLoaded = signal(false)
 
   private cleanup?: () => void;
 
@@ -23,11 +24,13 @@ export class DropdownMenu implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      this.cleanup = autoUpdate(
-        this.trigger.nativeElement,
-        this.dropdown.nativeElement,
-        () => this.updatePosition()
-      );
+      requestAnimationFrame(() => this.isLoaded.set(true))
+      if (this.isLoaded())
+        this.cleanup = autoUpdate(
+          this.trigger.nativeElement,
+          this.dropdown.nativeElement,
+          () => this.updatePosition()
+        );
     }
   }
 

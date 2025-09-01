@@ -3,6 +3,7 @@ import { Login } from './features/auth/login/login';
 import { Registration } from './features/auth/registration/registration';
 import { Board } from './features/board/board';
 import { HeaderLayout } from './layout/header/header';
+import { SelectedBoard } from './features/selected-board/selected-board';
 
 export const routes: Routes = [
     {
@@ -20,6 +21,16 @@ export const routes: Routes = [
             {
                 path: '',
                 component: Board
+            }
+        ]
+    },
+    {
+        path: 'board/:id',
+        component: HeaderLayout,
+        children: [
+            {
+                path: '',
+                component: SelectedBoard
             }
         ]
     }

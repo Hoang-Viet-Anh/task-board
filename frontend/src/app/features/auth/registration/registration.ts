@@ -42,16 +42,23 @@ export class Registration {
   isRepeatPasswordVisible = signal<boolean>(false)
 
   isLoading$: Observable<boolean>
-  error$: Observable<string | undefined>
+  isSuccess$: Observable<boolean>
 
   constructor(private readonly store: Store) {
     this.isLoading$ = this.store.select(selectRegisterStatus).pipe(map(status => status?.isLoading))
-    this.error$ = this.store.select(selectRegisterStatus).pipe(map(status => status?.error))
+    this.isSuccess$ = this.store.select(selectRegisterStatus).pipe(map(status => status?.isSuccess))
+
+    this.isSuccess$.subscribe(success => {
+      if (success) this.registerForm.patchValue({
+        username: '',
+        password: '',
+        repeatPassword: ''
+      })
+    })
   }
 
   onSubmit() {
     if (this.registerForm.valid) {
-      console.log(this.registerForm.value);
       this.store.dispatch(performRegister(this.registerForm.value))
     } else {
       this.registerForm.markAllAsTouched()
