@@ -13,6 +13,7 @@ import { Store } from '@ngrx/store';
 import { selectRemoveBoardStatus, selectUpdateBoardStatus } from '../../store/board.selectors';
 import { Actions, ofType } from '@ngrx/effects';
 import { removeBoardSuccess, updateBoardSuccess } from '../../store/board.actions';
+import { clearBoard } from '@app/features/selected-board/store/selected-board.actions';
 
 @Component({
   selector: 'app-board-card',
@@ -25,7 +26,7 @@ export class BoardCard {
   readonly Pencil = Pencil
   readonly Trash = Trash
 
-  @Input() board?: BoardEntity
+  @Input() board!: BoardEntity
 
   isRemoveLoading$: Observable<boolean>;
   isUpdateLoading$: Observable<boolean>;
@@ -58,6 +59,7 @@ export class BoardCard {
   }
 
   navigateToBoard(boardId: string) {
+    this.store.dispatch(clearBoard())
     this.router.navigate(['/board', boardId]);
   }
 

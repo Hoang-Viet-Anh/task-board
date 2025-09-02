@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Separator } from "@app/shared/components/separator/separator";
-import { EllipsisVertical, LucideAngularModule } from "lucide-angular";
+import { EllipsisVertical, Import, LucideAngularModule } from "lucide-angular";
 import { ColumnMenu } from "./components/column-menu/column-menu";
 import { AddTaskButton } from "./components/add-task-button/add-task-button";
 import { TaskCard } from "./components/task-card/task-card";
+import { ColumnEntity } from '../../models/column.model';
 
 @Component({
   selector: 'app-task-list',
@@ -14,4 +15,5 @@ import { TaskCard } from "./components/task-card/task-card";
 export class TaskList {
   readonly EllipsisVertical = EllipsisVertical
 
+  @Input() column!: ColumnEntity
 }

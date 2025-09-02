@@ -1,5 +1,5 @@
 <div class="flex flex-col w-screen h-screen items-center justify-center">
-    <app-card [class]="'flex flex-col gap-6 items-center justify-start p-4 w-96'">
+    <app-card [cardClass]="'flex flex-col gap-6 items-center justify-start p-4 w-96'">
         <h1 class="font-semibold text-lg">Sign in</h1>
         <form [formGroup]="registerForm" class="flex flex-col gap-6 w-full">
             <div class="flex flex-col gap-1">
@@ -77,7 +77,7 @@
                 }
             </div>
 
-            <app-button [class]="'flex items-center justify-center w-full'" (clicked)="onSubmit()"
+            <app-button [buttonClass]="'flex items-center justify-center w-full'" (clicked)="onSubmit()"
                 [disabled]="(isLoading$ | async) ?? false">
                 @if (isLoading$ | async) {
                 <lucide-icon [img]="LoaderCircle" [size]="24" class="animate-spin"></lucide-icon>
@@ -89,7 +89,7 @@
         </form>
         <div class="flex flex-row gap-2">
             <span>Already have an account?</span>
-            <app-button variant="link" [class]="'!p-0'" routerLink="/signin">
+            <app-button variant="link" [buttonClass]="'!p-0'" routerLink="/signin">
                 Sign in
             </app-button>
         </div>

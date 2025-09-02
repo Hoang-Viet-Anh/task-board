@@ -23,10 +23,6 @@ public class GetBoardByIdQueryHandler : IRequestHandler<GetBoardByIdQuery, Board
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken: cancellationToken) ?? throw new UnauthorizedAccessException();
         var board = await _context.Boards
-            .Include(b => b.Columns)
-            .ThenInclude(c => c.Tasks)
-            .ThenInclude(t => t.UserTasks)
-            .ThenInclude(ut => ut.User)
             .FirstOrDefaultAsync(b => b.Id == request.BoardId, cancellationToken: cancellationToken) ?? throw new NotFoundException("Board not found.");
         var isMemberOfBoard = await _context.UserBoards.FirstOrDefaultAsync(ub => ub.UserId == user.Id && ub.BoardId == board.Id, cancellationToken: cancellationToken) ?? throw new ForbiddenException();
         var isOwnerOfBoard = user.Id == board.OwnerId;

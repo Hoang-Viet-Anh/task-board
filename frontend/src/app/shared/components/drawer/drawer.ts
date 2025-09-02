@@ -13,6 +13,7 @@ export class Drawer {
   readonly X = X;
 
   @Input() open: boolean = false;
+  @Input() drawerClass: string = '';
   @Output() onClose = new EventEmitter<void>();
 
   closeDrawer() {

@@ -5,6 +5,7 @@ import { createBoard, createBoardFailure, createBoardSuccess, joinBoard, joinBoa
 import { catchError, map, mergeMap, of, tap } from "rxjs";
 import { HttpErrorResponse } from "@angular/common/http";
 import { MessageService } from "primeng/api";
+import { getBoards } from "@app/features/board/store/board.actions";
 
 @Injectable()
 export class AddBoardEffects {
@@ -17,13 +18,13 @@ export class AddBoardEffects {
             ofType(createBoard),
             mergeMap(action =>
                 this.addBoardService.createBoard(action.boardTitle).pipe(
-                    map(() => {
+                    mergeMap(() => {
                         this.messageService.add({
                             summary: "Board created",
                             severity: "success"
                         });
 
-                        return createBoardSuccess()
+                        return of(createBoardSuccess(), getBoards())
                     }),
                     catchError((error: HttpErrorResponse) => {
                         this.messageService.add({
@@ -43,13 +44,13 @@ export class AddBoardEffects {
             ofType(joinBoard),
             mergeMap(action =>
                 this.addBoardService.joinBoard(action.inviteCode).pipe(
-                    map(() => {
+                    mergeMap(() => {
                         this.messageService.add({
                             summary: "Board joined",
                             severity: "success"
                         });
 
-                        return joinBoardSuccess();
+                        return of(joinBoardSuccess(), getBoards())
                     }),
                     catchError((error: HttpErrorResponse) => {
                         if (error.status === 404) {

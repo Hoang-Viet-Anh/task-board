@@ -3,7 +3,7 @@
         <h1 class="text-xl font-semibold select-none text-primary" routerLink="">
             TaskBoard
         </h1>
-        <app-button variant="ghost" [class]="'!p-2 flex-row items-center justify-center gap-2'" (clicked)="onLogout()">
+        <app-button variant="ghost" [buttonClass]="'!p-2 flex-row items-center justify-center gap-2'" (clicked)="onLogout()">
             <lucide-icon [img]="Logout" [size]="20" class="mt-0.5"></lucide-icon>
             Logout
         </app-button>

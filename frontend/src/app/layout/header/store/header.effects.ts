@@ -6,7 +6,7 @@ import { logoutAction, logoutResponse } from "./header.actions";
 import { catchError, map, mergeMap, of, tap } from "rxjs";
 
 @Injectable()
-export class HeaderEffect {
+export class HeaderEffects {
     private $actions = inject(Actions)
     private headerService = inject(HeaderService)
     private route = inject(Router)

@@ -1,13 +1,38 @@
-<app-dropdown-menu [open]="open()" (onClose)="toggleDropdown(false)">
-    <app-button dropdownTrigger variant="ghost" [class]="'!p-2 !rounded-full mt-0.5'" (clicked)="toggleDropdown()">
-        <lucide-icon [img]="EllipsisVertical" [size]="20"></lucide-icon>
-    </app-button>
-    <div dropdownContent class="flex flex-col w-3xs">
-        <app-button variant="ghost" [class]="'w-full !rounded-none'">
-            To Do
-        </app-button>
-        <app-button variant="ghost" [class]="'w-full !rounded-none'">
-            Done
-        </app-button>
+<div class="flex flex-row w-full justify-between items-center">
+    @if (isEditColumn()) {
+    <app-list-title-input [column]="column" [isLoading]="(isLoading$ | async) ?? false"
+        (toggleShowInput)="toggleColumnEdit($event)" class="w-full"></app-list-title-input>
+    }
+    @else {
+    <h2>{{column.title}}</h2>
+    <div class="flex flex-row items-center gap-2">
+        <p>{{column.tasks?.length}}</p>
+        <app-dropdown-menu [open]="openDropdown()" (onClose)="toggleDropdown(false)">
+            <app-button dropdownTrigger variant="ghost" [buttonClass]="'!p-2 !rounded-full mt-0.5'"
+                (clicked)="toggleDropdown()">
+                <lucide-icon [img]="EllipsisVertical" [size]="20"></lucide-icon>
+            </app-button>
+            <div dropdownContent class="flex flex-col">
+                <app-button variant="ghost" [buttonClass]="'flex-row items-center gap-2 w-full !rounded-none'"
+                    (clicked)="toggleColumnEdit(true)">
+                    <lucide-icon [img]="Pencil" [size]="20"></lucide-icon>
+                    <p>Edit</p>
+                </app-button>
+                <app-button variant="ghost" [buttonClass]="'flex-row items-center gap-2 w-full !rounded-none'"
+                    (clicked)="toggleDialog(true)">
+                    <lucide-icon [img]="Trash" [size]="20" class="stroke-destructive"></lucide-icon>
+                    <p class="text-destructive">Remove</p>
+                </app-button>
+            </div>
+        </app-dropdown-menu>
     </div>
-</app-dropdown-menu>
+    }
+</div>
+
+
+
+<app-dialog [open]="openDialog()" (onClose)="toggleDialog(false)">
+    <div dialogContent class="flex flex-col items-center gap-4 w-96">
+        <app-remove-column [column]="column" (onClose)="toggleDialog(false)"></app-remove-column>
+    </div>
+</app-dialog>

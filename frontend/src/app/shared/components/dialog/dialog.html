@@ -1,17 +1,17 @@
 <ng-content select="[dialogTrigger]"></ng-content>
 
-@if (isLoaded()) {
-<div [ngClass]="[
-    'fixed inset-0 flex items-center justify-center bg-black/50 z-30 transition-opacity duration-200',
-    open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-]" (click)="closeDialog()">
+<div class="fixed inset-0 flex items-center justify-center bg-black/50 z-30 transition-opacity duration-200 opacity-0 pointer-events-none"
+    [ngClass]="[open ? '!opacity-100 !pointer-events-auto' : '']" (click)="closeDialog()">
     <div (click)="onDialogClick($event)">
-        <app-card [class]="'relative p-8 flex flex-col items-start justify-start min-w-2xs bg-white'">
-            <app-button variant="ghost" (clicked)="closeDialog()" [class]="'absolute !p-2 right-4 top-4'">
-                <lucide-icon [img]="X" [size]="20"></lucide-icon>
+        <app-card [cardClass]="[
+                'relative p-8 flex flex-col items-start justify-start min-w-2xs bg-white !overflow-visible !border-none',
+                cardClass
+                ].join(' ')">
+            <app-button variant="ghost" (clicked)="closeDialog()"
+                [buttonClass]="['absolute !p-2 right-4 top-4 hover:bg-secondary/20', closeButtonClass].join(' ')">
+                <lucide-icon [img]="X" [size]="20" class="stroke-inherit"></lucide-icon>
             </app-button>
             <ng-content select="[dialogContent]"></ng-content>
         </app-card>
     </div>
 </div>
-}

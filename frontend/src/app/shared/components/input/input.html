@@ -1,8 +1,6 @@
-<div (click)="focusInput()" [ngClass]="{
-    'rounded-xl transition-all duration-100': true,
-}">
+<div (click)="focusInput()" class="rounded-xl">
     <app-card
-        [class]="'py-2.5 px-2.5 flex-row gap-1 w-full focus-within:border-primary transition-all duration-200 cursor-text'">
+        [cardClass]="'py-2.5 px-2.5 flex-row gap-1 w-full focus-within:border-primary transition-colors cursor-text'">
         <ng-content select="[startIcon]"></ng-content>
         <input #inputElement [name]="name" [id]="id" [placeholder]="placeholder" [type]="type" [value]="value"
             [disabled]="disabled" (input)="onChange($event)"

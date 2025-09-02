@@ -1,0 +1,40 @@
+:host ::ng-deep .p-datepicker-panel {
+    --p-datepicker-panel-background: #ffffff;
+    --p-datepicker-panel-color: #000000;
+
+    --p-datepicker-header-background: #ffffff;
+    --p-datepicker-header-color: #000000;
+
+    --p-datepicker-title-color: #000000;
+
+    --p-datepicker-select-month-color: #000000;
+    --p-datepicker-select-month-hover-color: #000000;
+    --p-datepicker-select-month-hover-background: #e2e2e2;
+
+    --p-datepicker-select-year-color: #000000;
+    --p-datepicker-select-year-hover-color: #000000;
+    --p-datepicker-select-year-hover-background: #e2e2e2;
+
+    --p-datepicker-week-day-color: #000000;
+
+    --p-datepicker-date-color: #000000;
+    --p-datepicker-date-hover-color: #000000;
+    --p-datepicker-date-hover-background: #e2e2e2;
+    --p-datepicker-date-selected-color: #ffffff;
+    --p-datepicker-date-selected-background: oklch(55.4% 0.046 257.417);
+
+    --p-datepicker-buttonbar-background: #ffffff;
+    --p-datepicker-buttonbar-color: #000000;
+
+    --p-datepicker-today-color: #000000;
+    --p-datepicker-today-background: #f0f0f0;
+}
+
+:host ::ng-deep .p-datepicker-input {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+:host ::ng-deep .p-datepicker-input:focus {
+    border: 1px solid #000000 !important;
+}

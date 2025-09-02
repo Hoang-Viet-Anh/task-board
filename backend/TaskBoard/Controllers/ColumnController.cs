@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TaskBoard.Application.Columns.Commands.CreateColumn;
 using TaskBoard.Application.Columns.Commands.DeleteColumn;
 using TaskBoard.Application.Columns.Commands.UpdateColumn;
+using TaskBoard.Application.Columns.Queries.GetAllColumns;
 using TaskBoard.Application.Common.Dtos;
 using TaskBoard.Application.Common.Interfaces;
 
@@ -53,6 +54,17 @@ public class ColumnController : ControllerBase
         await _mediator.Send(command);
 
         return Ok();
+    }
+
+    [HttpGet("get-all/{BoardId}")]
+    public async Task<IActionResult> GetAllColumnsByBoardId(Guid BoardId)
+    {
+        var userId = _currentUserService.GetUserId();
+
+        var query = new GetAllColumnsQuery(userId, BoardId);
+        var columns = await _mediator.Send(query);
+
+        return Ok(columns);
     }
 
 }

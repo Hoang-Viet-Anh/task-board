@@ -9,7 +9,7 @@
         </small>
         }
     </div>
-    <app-button class="w-full" [class]="'justify-center'" (clicked)="onCreateSubmit()"
+    <app-button class="w-full" [buttonClass]="'justify-center w-full'" (clicked)="onCreateSubmit()"
         [disabled]="(isLoading$ | async) ?? false">
         @if (isLoading$ | async) {
         <lucide-icon [img]="LoaderCircle" [size]="20" class="animate-spin"></lucide-icon>

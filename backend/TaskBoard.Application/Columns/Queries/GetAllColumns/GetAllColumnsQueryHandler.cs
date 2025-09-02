@@ -7,20 +7,20 @@ using TaskBoard.Application.Common.Interfaces;
 
 namespace TaskBoard.Application.Columns.Queries.GetAllColumns;
 
-public record GetAllColumnsCommand(Guid UserId, Guid BoardId) : IRequest<List<ColumnDto>>;
+public record GetAllColumnsQuery(Guid UserId, Guid BoardId) : IRequest<List<ColumnDto>>;
 
-public class GetAllColumnsCommandHandler : IRequestHandler<GetAllColumnsCommand, List<ColumnDto>>
+public class GetAllColumnsQueryHandler : IRequestHandler<GetAllColumnsQuery, List<ColumnDto>>
 {
     public readonly IApplicationDbContext _context;
     public readonly IMapper _mapper;
 
-    public GetAllColumnsCommandHandler(IApplicationDbContext context, IMapper mapper)
+    public GetAllColumnsQueryHandler(IApplicationDbContext context, IMapper mapper)
     {
         _context = context;
         _mapper = mapper;
     }
 
-    public async Task<List<ColumnDto>> Handle(GetAllColumnsCommand request, CancellationToken cancellationToken)
+    public async Task<List<ColumnDto>> Handle(GetAllColumnsQuery request, CancellationToken cancellationToken)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken: cancellationToken) ?? throw new UnauthorizedAccessException();
         var board = await _context.Boards

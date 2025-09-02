@@ -7,5 +7,4 @@ public class BoardDto
     public string? InviteCode { get; set; }
     public bool? IsOwner { get; set; }
     public Guid? OwnerId { get; set; }
-    public List<ColumnDto> Columns { get; set; } = [];
 }

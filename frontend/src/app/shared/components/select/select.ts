@@ -9,7 +9,10 @@ import { ChevronDown, LucideAngularModule } from "lucide-angular";
   selector: 'app-select',
   imports: [DropdownMenu, CommonModule, Button, LucideAngularModule],
   templateUrl: './select.html',
-  styleUrl: './select.css'
+  styleUrl: './select.css',
+  host: {
+    class: 'w-fit'
+  }
 })
 export class Select {
   readonly ChevronDown = ChevronDown;
@@ -19,7 +22,7 @@ export class Select {
   @Input() items: SelectItem[] = [];
   @Output() onSelected = new EventEmitter<SelectItem>();
 
-  @Input() class: string = '';
+  @Input() selectClass: string = '';
 
   open = signal<boolean>(false);
 
@@ -30,5 +33,9 @@ export class Select {
   selectItem(item: SelectItem) {
     this.onSelected.emit(item);
     this.toggleSelect(false);
+  }
+
+  filteredList() {
+    return this.items.filter(item => item.value != this.value?.value)
   }
 }

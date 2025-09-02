@@ -1,0 +1,20 @@
+<app-input [value]="listTitle()" (onValueChange)="onTitleChange($event)" [disabled]="isLoading"></app-input>
+<div class="flex flex-row gap-1 items-center">
+    <app-button class="w-full" [buttonClass]="'justify-center'" (clicked)="createList()" [disabled]="isLoading">
+        @if(isLoading) {
+        <lucide-icon [img]="LoaderCircle" [size]="20" class="animate-spin"></lucide-icon>
+        }
+        @else {
+            @if (column.id) {
+                Save
+            }
+            @else {
+                Add list
+            }
+        }
+    </app-button>
+    <app-button variant="outline" class="w-full" [buttonClass]="'justify-center'" (clicked)="onInputClose(false)"
+        [disabled]="isLoading">
+        Cancel
+    </app-button>
+</div>

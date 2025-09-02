@@ -9,7 +9,7 @@
         </small>
         }
     </div>
-    <app-button class="w-full" [class]="'justify-center'" (clicked)="onJoinSubmit()"
+    <app-button class="w-full" [buttonClass]="'justify-center w-full'" (clicked)="onJoinSubmit()"
         [disabled]="(isLoading$ | async) ?? false">
         @if (isLoading$ | async) {
         <lucide-icon [img]="LoaderCircle" [size]="20" class="animate-spin"></lucide-icon>

@@ -1,7 +1,7 @@
-<app-card [class]="'flex flex-col p-4 gap-4'">
+<app-card [cardClass]="'flex flex-col p-4 gap-4'">
     <div class="flex flex-row items-center justify-between w-full">
         <h2 class="font-medium text-lg">Card Title</h2>
-        <app-button variant="ghost" [class]="'!p-2 !rounded-full'">
+        <app-button variant="ghost" [buttonClass]="'!p-2 !rounded-full'">
             <lucide-icon [img]="EllipsisVertical" [size]="20"></lucide-icon>
         </app-button>
     </div>
@@ -13,7 +13,7 @@
         <lucide-icon [img]="Calendar"></lucide-icon>
         <p class="text-primary font-semibold">Wed, 19 Apr</p>
     </div>
-    <app-badge [class]="'flex-row items-center pl-1.5 pr-2.5'">
+    <app-badge [badgeClass]="'flex-row items-center pl-1.5 pr-2.5'">
         <lucide-icon [img]="Dot" [size]="24" class="dot-icon"></lucide-icon>
         <p class="mb-0.5">High</p>
     </app-badge>

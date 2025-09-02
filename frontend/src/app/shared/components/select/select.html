@@ -1,19 +1,23 @@
 <app-dropdown-menu [open]="open()" (onClose)="toggleSelect(false)">
-    <app-button dropdownTrigger variant="outline" (clicked)="toggleSelect()"
-        [class]="'flex flex-row gap-2 justify-between items-center !px-3 ' + class">
+    <app-button dropdownTrigger variant="outline" (clicked)="toggleSelect()" [buttonClass]="[
+        'flex flex-row gap-2 justify-between items-center !px-3',
+        selectClass
+    ].join(' ')">
         <p>{{value?.title ?? title}}</p>
-        <lucide-icon [img]="ChevronDown" [size]="20" [ngClass]="{
-            'transition-all duration-100 stroke-primary': true,
+        <lucide-icon [img]="ChevronDown" [size]="20" class="transition-transform duration-100 stroke-primary" [ngClass]="{
+            'rotate-180': open()
         }">
         </lucide-icon>
     </app-button>
-    <div dropdownContent [ngClass]="[
-        'flex flex-col',
-        class
-    ]">
-        @for (item of items; track item.value) {
-        @if (item.value !== value?.value) {
-        <app-button variant="ghost" (clicked)="selectItem(item)" [class]="'w-full !rounded-none'">
+    <div dropdownContent class="flex flex-col" [ngClass]="selectClass">
+        @if (filteredList().length === 0) {
+        <div class="flex items-center justify-center py-10 w-full">
+            <p class="text-primary">No items available</p>
+        </div>
+        }
+        @else {
+        @for (item of filteredList(); track item.value) {
+        <app-button variant="ghost" (clicked)="selectItem(item)" [buttonClass]="'w-full !rounded-none'">
             {{item.title}}
         </app-button>
         }

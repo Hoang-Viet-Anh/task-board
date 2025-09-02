@@ -8,7 +8,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrl: './card.css'
 })
 export class Card {
-  @Input() class: string = '';
+  @Input() cardClass: string = '';
   @Output() clicked = new EventEmitter();
 
   onClick() {

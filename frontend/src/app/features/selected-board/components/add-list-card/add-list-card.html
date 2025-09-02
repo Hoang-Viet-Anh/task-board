@@ -1,0 +1,16 @@
+<div class="flex flex-col gap-2 w-2xs">
+    <app-separator></app-separator>
+    @if (showInput()) {
+    <app-list-title-input [column]="{boardId: boardId}" [isLoading]="(isLoading$ | async) ?? false"
+        (toggleShowInput)="toggleShowInput($event)"></app-list-title-input>
+    }
+    @else {
+    <div class="flex flex-row items-center justify-between">
+        <p>Add another list</p>
+        <app-button variant="ghost" [buttonClass]="'!p-2 !rounded-full'" (clicked)="toggleShowInput(true)">
+            <lucide-icon [img]="Plus" [size]="20"></lucide-icon>
+        </app-button>
+    </div>
+    }
+    <app-separator></app-separator>
+</div>
