@@ -1,34 +1,39 @@
-<div class="w-full h-16 bg-primary rounded-t-lg"></div>
-<div class="flex flex-col w-full gap-6 p-8">
-    <input type="text" class="focus-visible:outline-none font-bold text-xl w-60" [value]="taskTitle()"
-        (input)="onTaskTitleChange($event)" />
+<app-dialog-layout [cardClass]="'!p-0 !border-none'" [closeButtonClass]="'stroke-white'">
+    <div class="flex flex-col w-2xl">
+        <div class="w-full h-16 bg-primary rounded-t-lg"></div>
+        <div class="flex flex-col w-full gap-6 p-8">
+            <input type="text" class="focus-visible:outline-none font-bold text-2xl w-60" [value]="taskTitle()"
+                (input)="onTaskTitleChange($event)" />
 
-    <div #selectComponents class="grid grid-cols-2 grid-rows-3 items-start gap-2 w-1/2">
-        <div class="flex flex-row gap-2 items-center">
-            <lucide-icon [img]="List" class="stroke-primary"></lucide-icon>
-            <p class="text-primary">List</p>
-        </div>
-        <app-select [items]="(columnsToSelectEntity() | async) ?? []" [value]="selectedColumn()" [selectClass]="'!w-40'"
-            (onSelected)="onColumnSelect($event)"></app-select>
+            <div class="flex flex-col items-start gap-2 w-1/2">
+                <app-task-list-select class="grid grid-cols-2 w-full" [value]="selectedList()"
+                    (onSelect)="onListSelect($event)"></app-task-list-select>
 
-        <div class="flex flex-row gap-2 items-center">
-            <lucide-icon [img]="Calendar" class="stroke-primary"></lucide-icon>
-            <p class="text-primary">Due Date</p>
-        </div>
-        <p-datepicker [minDate]="getCurrentDate()" [(ngModel)]="date" class="w-40 bg-white" inputStyleClass="!w-40"
-            panelStyleClass="!bg-white !text-black"></p-datepicker>
+                <app-task-date-select class="grid grid-cols-2 w-full" [value]="selectedDate()"
+                    (onSelect)="onDateSelect($event)"></app-task-date-select>
 
-        <div class="flex flex-row gap-2 items-center">
-            <lucide-icon [img]="Tag" class="stroke-primary"></lucide-icon>
-            <p class="text-primary">Priority</p>
+                <app-task-priority-select class="grid grid-cols-2 w-full" [value]="selectedPriority()"
+                    (onSelect)="onPrioritySelect($event)"></app-task-priority-select>
+            </div>
+
+            <app-task-description-input [value]="taskDescription()"
+                (onInput)="onTaskDescriptionChange($event)"></app-task-description-input>
+
+            <div class="flex flex-row w-full gap-2">
+                <app-button class="w-full" buttonClass="w-full justify-center" [disabled]="getIsLoading() | async"
+                    (clicked)="onSave()">
+                    @if (getIsLoading() | async) {
+                    <lucide-icon [img]="LoaderCircle" [size]="20" class="animate-spin"></lucide-icon>
+                    }
+                    @else {
+                    Save
+                    }
+                </app-button>
+                <app-button class="w-full" variant="secondary" buttonClass="w-full justify-center"
+                    [disabled]="getIsLoading() | async" (clicked)="closeDialog()">
+                    Cancel
+                </app-button>
+            </div>
         </div>
-        <app-select [items]="priorityOptions" [value]="selectedPriority()" title="Select priority"
-            [selectClass]="'!w-40'" (onSelected)="onPrioritySelect($event)"></app-select>
     </div>
-
-    <div class="flex flex-col w-full gap-2">
-        <h2 class="font-semibold">Description</h2>
-        <textarea [value]="taskDescription()" (input)="onTaskDescriptionChange($event)"
-            class="resize-none w-full h-20 focus-visible:outline-primary rounded-md outline outline-secondary transition-all duration-200 p-2"></textarea>
-    </div>
-</div>
+</app-dialog-layout>

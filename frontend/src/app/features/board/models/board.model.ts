@@ -6,5 +6,5 @@ export interface BoardEntity {
     inviteCode?: string,
     isOwner?: boolean,
     ownerId?: string,
-    columns: ColumnEntity[]
+    columns?: ColumnEntity[]
 }

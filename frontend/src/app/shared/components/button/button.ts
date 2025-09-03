@@ -9,7 +9,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class Button {
   @Input() variant: 'primary' | 'secondary' | 'outline' | 'ghost' | 'link' | 'destruction' = 'primary';
-  @Input() disabled: boolean = false;
+  @Input() disabled: boolean | null = false;
   @Input() buttonClass: string = '';
 
   @Output() clicked = new EventEmitter<void>();

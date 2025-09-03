@@ -5,22 +5,22 @@ using TaskBoard.Application.Common.Dtos;
 using TaskBoard.Application.Common.Exceptions;
 using TaskBoard.Application.Common.Interfaces;
 
-namespace TaskBoard.Application.Columns.Queries.GetAllColumns;
+namespace TaskBoard.Application.Columns.Queries.GetColumnsByBoardId;
 
-public record GetAllColumnsQuery(Guid UserId, Guid BoardId) : IRequest<List<ColumnDto>>;
+public record GetColumnsByBoardId(Guid UserId, Guid BoardId) : IRequest<List<ColumnDto>>;
 
-public class GetAllColumnsQueryHandler : IRequestHandler<GetAllColumnsQuery, List<ColumnDto>>
+public class GetColumnsByBoardIdHandler : IRequestHandler<GetColumnsByBoardId, List<ColumnDto>>
 {
     public readonly IApplicationDbContext _context;
     public readonly IMapper _mapper;
 
-    public GetAllColumnsQueryHandler(IApplicationDbContext context, IMapper mapper)
+    public GetColumnsByBoardIdHandler(IApplicationDbContext context, IMapper mapper)
     {
         _context = context;
         _mapper = mapper;
     }
 
-    public async Task<List<ColumnDto>> Handle(GetAllColumnsQuery request, CancellationToken cancellationToken)
+    public async Task<List<ColumnDto>> Handle(GetColumnsByBoardId request, CancellationToken cancellationToken)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken: cancellationToken) ?? throw new UnauthorizedAccessException();
         var board = await _context.Boards
@@ -32,7 +32,14 @@ public class GetAllColumnsQueryHandler : IRequestHandler<GetAllColumnsQuery, Lis
 
         if (!board.UserBoards.Any(ub => ub.UserId == user.Id)) throw new ForbiddenException();
 
-        var columnsDto = _mapper.Map<List<ColumnDto>>(board.Columns);
+        var columns = board.Columns.OrderBy(c => c.CreatedAt).ToList();
+
+        columns.ForEach(cd => cd.Tasks = cd.Tasks.OrderBy(t => t.DueDate)
+                            .ThenByDescending(t => t.Priority)
+                            .ThenBy(t => t.CreatedAt)
+                            .ToList());
+
+        var columnsDto = _mapper.Map<List<ColumnDto>>(columns);
 
         return columnsDto;
     }

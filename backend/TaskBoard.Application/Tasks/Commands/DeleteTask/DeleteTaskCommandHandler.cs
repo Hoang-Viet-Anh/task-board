@@ -1,8 +1,10 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using TaskBoard.Application.ActivityLogs.Commands.CreateLog;
 using TaskBoard.Application.Common.Dtos;
 using TaskBoard.Application.Common.Exceptions;
 using TaskBoard.Application.Common.Interfaces;
+using TaskBoard.Domain.Entities;
 using TaskBoard.Domain.Enums;
 using TaskEntity = TaskBoard.Domain.Entities.Task;
 
@@ -13,10 +15,12 @@ public record DeleteTaskCommand(Guid UserId, Guid TaskId) : IRequest<Unit>;
 public class DeleteTaskCommandHandler : IRequestHandler<DeleteTaskCommand, Unit>
 {
     public readonly IApplicationDbContext _context;
+    public readonly IMediator _mediator;
 
-    public DeleteTaskCommandHandler(IApplicationDbContext context)
+    public DeleteTaskCommandHandler(IApplicationDbContext context, IMediator mediator)
     {
         _context = context;
+        _mediator = mediator;
     }
 
     public async Task<Unit> Handle(DeleteTaskCommand request, CancellationToken cancellationToken)
@@ -32,7 +36,18 @@ public class DeleteTaskCommandHandler : IRequestHandler<DeleteTaskCommand, Unit>
 
         _context.Tasks.Remove(task);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        var log = new TaskActivityLog
+        {
+            Board = task.Column.Board,
+            BoardId = task.Column.BoardId,
+            Task = task,
+            TaskId = task.Id,
+            User = user,
+            UserId = user.Id,
+            Log = $"{user.Username} removed \"{task.Title}\""
+        };
+        var command = new CreateLogCommand(log);
+        await _mediator.Send(command, cancellationToken);
 
         return Unit.Value;
     }

@@ -11,6 +11,7 @@ import { computePosition, flip, offset, autoUpdate } from '@floating-ui/dom';
 })
 export class DropdownMenu implements AfterViewInit, OnDestroy {
   @Input() open: boolean = false;
+  @Input() dropdownClass: string = '';
   @Output() onClose = new EventEmitter<void>();
   @ViewChild('trigger') trigger!: ElementRef<HTMLDivElement>;
   @ViewChild('dropdown') dropdown!: ElementRef<HTMLDivElement>;

@@ -1,15 +1,8 @@
-<div #trigger>
-    <ng-content select="[drawerTrigger]"></ng-content>
-</div>
-
 <div class="fixed inset-0 flex flex-row justify-end bg-black/50 transition-opacity duration-50 z-20 opacity-0 pointer-events-none delay-200"
-    [ngClass]="[open ? '!opacity-100 !pointer-events-auto !delay-[0ms]' : '']" (click)="closeDrawer()">
+    [ngClass]="[isOpen() ? '!opacity-100 !pointer-events-auto !delay-[0ms]' : '']" (click)="closeDrawer()">
     <aside
         class="relative flex flex-col right-0 h-screen w-80 bg-white transition-transform duration-200 delay-50 translate-x-full"
-        [ngClass]="[open ? '!translate-0' : '', drawerClass]" (click)="drawerClick($event)">
-        <app-button variant="ghost" (clicked)="closeDrawer()" [buttonClass]="'absolute !p-2 right-4 top-4'">
-            <lucide-icon [img]="X" [size]="20"></lucide-icon>
-        </app-button>
-        <ng-content select="[drawerContent]"></ng-content>
+        [ngClass]="[isOpen() ? '!translate-0' : '']" (click)="preventDrawerClose($event)">
+        <ng-template #drawerContainer></ng-template>
     </aside>
 </div>

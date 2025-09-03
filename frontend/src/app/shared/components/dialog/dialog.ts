@@ -1,25 +1,28 @@
 import { CommonModule, } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Card } from "../card/card";
-import { Button } from "../button/button";
-import { LucideAngularModule, X } from 'lucide-angular';
+import { AfterViewInit, Component, ViewChild, ViewContainerRef } from '@angular/core';
+import { DialogService } from '@app/shared/services/dialog.service';
 
 @Component({
   selector: 'app-dialog',
-  imports: [CommonModule, Card, Button, LucideAngularModule],
+  imports: [CommonModule],
   templateUrl: './dialog.html',
   styleUrl: './dialog.css'
 })
-export class Dialog {
-  readonly X = X;
+export class Dialog implements AfterViewInit {
+  @ViewChild('dialogContainer', { read: ViewContainerRef }) container!: ViewContainerRef;
 
-  @Input() open: boolean = false;
-  @Input() cardClass: string = '';
-  @Input() closeButtonClass: string = '';
-  @Output() onClose = new EventEmitter<void>();
+  constructor(private dialogService: DialogService) { }
+
+  ngAfterViewInit(): void {
+    this.dialogService.registerContainer(this.container);
+  }
+
+  isOpen() {
+    return this.dialogService.isOpen();
+  }
 
   closeDialog() {
-    this.onClose.emit()
+    this.dialogService.close();
   }
 
   onDialogClick(event: Event) {

@@ -1,15 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, signal } from '@angular/core';
-import { Card } from "@app/shared/components/card/card";
+import { Component, Input } from '@angular/core';
 import { LucideAngularModule, Plus } from "lucide-angular";
 import { Button } from "@app/shared/components/button/button";
-import { Dialog } from "@app/shared/components/dialog/dialog";
-import { AddTaskDialog } from "./components/add-task-dialog/add-task-dialog";
 import { ColumnEntity } from '@app/features/selected-board/models/column.model';
+import { DialogService } from '@app/shared/services/dialog.service';
+import { AddTaskDialog } from './components/add-task-dialog/add-task-dialog';
 
 @Component({
   selector: 'app-add-task-button',
-  imports: [Card, CommonModule, LucideAngularModule, Button, Dialog, AddTaskDialog],
+  imports: [CommonModule, LucideAngularModule, Button],
   templateUrl: './add-task-button.html',
   styleUrl: './add-task-button.css',
   host: {
@@ -21,10 +20,11 @@ export class AddTaskButton {
 
   @Input() column!: ColumnEntity
 
-  openDialog = signal<boolean>(false)
+  constructor(private dialogService: DialogService) { }
 
-  toggleDialog(state?: boolean) {
-    this.openDialog.set(state ?? !this.openDialog())
+  onAddTaskDialogOpen() {
+    this.dialogService.open(AddTaskDialog, {
+      column: this.column
+    })
   }
-
 }

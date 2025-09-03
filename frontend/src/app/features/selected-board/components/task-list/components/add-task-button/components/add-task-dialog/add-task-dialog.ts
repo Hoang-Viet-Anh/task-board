@@ -1,64 +1,56 @@
 import { Component, Input, OnInit, signal } from '@angular/core';
-import { Calendar, List, LucideAngularModule, Tag } from "lucide-angular";
-import { Select } from "@app/shared/components/select/select";
+import { Calendar, List, LoaderCircle, LucideAngularModule } from "lucide-angular";
 import { TaskEntity } from '@app/features/selected-board/models/task.model';
 import { ColumnEntity } from '@app/features/selected-board/models/column.model';
 import { SelectItem } from '@app/shared/components/select/models/select-item.model';
 import { Store } from '@ngrx/store';
-import { map, Observable } from 'rxjs';
-import { selectSelectedBoardColumns } from '@app/features/selected-board/store/selected-board.selectors';
 import { CommonModule } from '@angular/common';
 import { DatePickerModule } from 'primeng/datepicker';
 import { FormsModule } from '@angular/forms';
+import { DialogLayout } from "@app/shared/modals/dialog-layout/dialog-layout";
+import { TaskDescriptionInput } from "./components/task-description-input/task-description-input";
+import { priorityOptions, TaskPrioritySelect } from "./components/task-priority-select/task-priority-select";
+import { TaskListSelect } from "./components/task-list-select/task-list-select";
+import { TaskDateSelect } from "./components/task-date-select/task-date-select";
+import { Button } from "@app/shared/components/button/button";
+import { DialogService } from '@app/shared/services/dialog.service';
+import { createTaskRequest, updateTaskRequest } from '../../../../store/task.actions';
+import { map, Observable } from 'rxjs';
+import { selectCreateTaskStatus, selectUpdateTaskStatus } from '../../../../store/task.selectors';
 
 @Component({
   selector: 'app-add-task-dialog',
-  imports: [LucideAngularModule, Select, CommonModule, DatePickerModule, FormsModule],
+  imports: [LucideAngularModule, CommonModule, DatePickerModule, FormsModule, DialogLayout, TaskDescriptionInput, TaskPrioritySelect, TaskListSelect, TaskDateSelect, Button],
   templateUrl: './add-task-dialog.html',
   styleUrl: './add-task-dialog.css'
 })
 export class AddTaskDialog implements OnInit {
-  readonly List = List
-  readonly Calendar = Calendar
-  readonly Tag = Tag
-
-  priorityOptions: SelectItem[] = [
-    {
-      value: "low",
-      title: "Low"
-    },
-    {
-      value: "medium",
-      title: "Medium"
-    },
-    {
-      value: "high",
-      title: "High"
-    }
-  ]
+  readonly LoaderCircle = LoaderCircle
 
   @Input() task?: TaskEntity
   @Input() column!: ColumnEntity
-  columnList$: Observable<ColumnEntity[]>
 
   taskTitle = signal<string>('New Task')
-  selectedPriority = signal<SelectItem | undefined>(undefined)
-  selectedColumn = signal<SelectItem | undefined>(undefined)
-  selectedDate = signal<Date | undefined>(undefined)
-  date: Date | undefined
   taskDescription = signal<string>('')
 
-  isLoaded = false;
+  selectedList = signal<SelectItem | undefined>(undefined)
+  selectedDate = signal<Date>(new Date())
+  selectedPriority = signal<SelectItem | undefined>(priorityOptions[1])
+
+  isCreateLoading$: Observable<boolean>
+  isUpdateLoading$: Observable<boolean>
 
   constructor(
     private store: Store,
+    private dialogService: DialogService
   ) {
-    this.columnList$ = this.store.select(selectSelectedBoardColumns)
+    this.isCreateLoading$ = this.store.select(selectCreateTaskStatus).pipe(map(state => state.isLoading))
+    this.isUpdateLoading$ = this.store.select(selectUpdateTaskStatus).pipe(map(state => state.isLoading))
   }
 
   ngOnInit(): void {
     if (this.column) {
-      this.selectedColumn.set({
+      this.selectedList.set({
         value: this.column.id!,
         title: this.column.title!
       })
@@ -66,9 +58,37 @@ export class AddTaskDialog implements OnInit {
     if (this.task) {
       this.taskTitle.set(this.task.title!)
       this.taskDescription.set(this.task.description!)
-      this.selectedPriority.set(this.priorityOptions.find(po => po.value === this.task?.priority))
-      this.selectedDate.set(this.task.dueDate)
+      this.selectedDate.set(new Date(this.task.dueDate!))
+      this.selectedPriority.set(priorityOptions.find(po => po.value === this.task?.priority))
     }
+  }
+
+  closeDialog() {
+    this.dialogService.close()
+  }
+
+  onSave() {
+    const newTask: TaskEntity = {
+      id: this.task?.id,
+      title: this.taskTitle(),
+      description: this.taskDescription(),
+      columnId: this.selectedList()?.value,
+      dueDate: this.selectedDate(),
+      priority: this.selectedPriority()?.value
+    }
+
+    newTask.dueDate?.setHours(0, 0, 0, 0)
+
+    if (newTask.id === undefined)
+      this.store.dispatch(createTaskRequest({
+        task: newTask,
+        boardId: this.column.boardId!
+      }))
+    else
+      this.store.dispatch(updateTaskRequest({
+        task: newTask,
+        boardId: this.column.boardId!
+      }))
   }
 
   onTaskTitleChange(event: Event) {
@@ -77,29 +97,24 @@ export class AddTaskDialog implements OnInit {
     this.taskTitle.set(value)
   }
 
-  onTaskDescriptionChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const value: string = input.value;
+  onTaskDescriptionChange(value: string) {
     this.taskDescription.set(value)
+  }
+
+  onListSelect(item: SelectItem) {
+    this.selectedList.set(item)
+  }
+
+  onDateSelect(newDate: Date) {
+    this.selectedDate.set(newDate)
   }
 
   onPrioritySelect(item: SelectItem) {
     this.selectedPriority.set(item)
   }
 
-  onColumnSelect(item: SelectItem) {
-    this.selectedColumn.set(item)
-  }
-
-  columnsToSelectEntity(): Observable<SelectItem[]> {
-    return this.columnList$.pipe(map(list => list.map(column => ({
-      value: column.id!,
-      title: column.title!
-    }))))
-  }
-
-  getCurrentDate() {
-    return new Date()
+  getIsLoading(): Observable<boolean> {
+    return this.isCreateLoading$ || this.isUpdateLoading$
   }
 }
 

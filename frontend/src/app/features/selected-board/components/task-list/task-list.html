@@ -1,7 +1,12 @@
-<div class="flex flex-col gap-2 w-2xs">
+<div class="flex flex-col gap-2 w-2xs h-[calc(100vh-200px)]" cdkDropList [cdkDropListData]="column"
+    (cdkDropListDropped)="onDropped($event)">
     <app-separator></app-separator>
     <app-column-menu [column]="column"></app-column-menu>
     <app-separator></app-separator>
     <app-add-task-button [column]="column"></app-add-task-button>
-    <app-task-card></app-task-card>
+    <div class="flex flex-col max-h-full pb-2 gap-2 overflow-y-auto">
+        @for (item of column.tasks; track item.id) {
+        <app-task-card [task]="item" [column]="column" cdkDrag [cdkDragData]="item"></app-task-card>
+        }
+    </div>
 </div>

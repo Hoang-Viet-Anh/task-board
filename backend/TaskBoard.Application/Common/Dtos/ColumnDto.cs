@@ -6,4 +6,5 @@ public class ColumnDto
     public string? BoardId { get; set; }
     public string? Title { get; set; }
     public List<TaskDto> Tasks { get; set; } = [];
+    public DateTime? CreatedAt { get; set; }
 }

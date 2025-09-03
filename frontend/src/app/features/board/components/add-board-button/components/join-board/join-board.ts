@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Button } from "@app/shared/components/button/button";
 import { LoaderCircle, LucideAngularModule } from "lucide-angular";
 import { CommonModule } from '@angular/common';
@@ -16,7 +16,7 @@ import { selectJoinBoardStatus } from '../../store/add-board.selectors';
   templateUrl: './join-board.html',
   styleUrl: './join-board.css'
 })
-export class JoinBoard {
+export class JoinBoard implements OnInit {
   readonly LoaderCircle = LoaderCircle
 
   joinBoardForm: FormGroup = new FormGroup({
@@ -24,14 +24,14 @@ export class JoinBoard {
   })
 
   isLoading$: Observable<boolean>;
-  isSuccess$: Observable<boolean>;
 
   constructor(private readonly store: Store) {
     this.isLoading$ = this.store.select(selectJoinBoardStatus).pipe(map(status => status?.isLoading))
-    this.isSuccess$ = this.store.select(selectJoinBoardStatus).pipe(map(status => status?.isSuccess))
+  }
 
-    this.isSuccess$.subscribe(success => {
-      if (success) this.joinBoardForm.patchValue({ inviteCode: '' })
+  ngOnInit(): void {
+    this.joinBoardForm.patchValue({
+      inviteCode: ''
     })
   }
 

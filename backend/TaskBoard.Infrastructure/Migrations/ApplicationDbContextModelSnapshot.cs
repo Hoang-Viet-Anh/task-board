@@ -165,7 +165,7 @@ namespace TaskBoard.Infrastructure.Migrations
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("TaskId")
+                    b.Property<Guid?>("TaskId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("UserId")
@@ -315,8 +315,7 @@ namespace TaskBoard.Infrastructure.Migrations
                     b.HasOne("TaskBoard.Domain.Entities.Task", "Task")
                         .WithMany("TaskActivityLogs")
                         .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("TaskBoard.Domain.Entities.User", "User")
                         .WithMany("TaskActivityLogs")

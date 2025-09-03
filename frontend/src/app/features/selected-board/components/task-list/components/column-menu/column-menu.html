@@ -12,27 +12,15 @@
                 (clicked)="toggleDropdown()">
                 <lucide-icon [img]="EllipsisVertical" [size]="20"></lucide-icon>
             </app-button>
-            <div dropdownContent class="flex flex-col">
+            <div dropdownContent class="flex flex-col" (click)="toggleDropdown(false)">
                 <app-button variant="ghost" [buttonClass]="'flex-row items-center gap-2 w-full !rounded-none'"
                     (clicked)="toggleColumnEdit(true)">
                     <lucide-icon [img]="Pencil" [size]="20"></lucide-icon>
                     <p>Edit</p>
                 </app-button>
-                <app-button variant="ghost" [buttonClass]="'flex-row items-center gap-2 w-full !rounded-none'"
-                    (clicked)="toggleDialog(true)">
-                    <lucide-icon [img]="Trash" [size]="20" class="stroke-destructive"></lucide-icon>
-                    <p class="text-destructive">Remove</p>
-                </app-button>
+                <app-remove-column [column]="column"></app-remove-column>
             </div>
         </app-dropdown-menu>
     </div>
     }
 </div>
-
-
-
-<app-dialog [open]="openDialog()" (onClose)="toggleDialog(false)">
-    <div dialogContent class="flex flex-col items-center gap-4 w-96">
-        <app-remove-column [column]="column" (onClose)="toggleDialog(false)"></app-remove-column>
-    </div>
-</app-dialog>

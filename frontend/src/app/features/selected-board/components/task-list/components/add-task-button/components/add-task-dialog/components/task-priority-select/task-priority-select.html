@@ -1,0 +1,6 @@
+<div class="flex flex-row gap-2 items-center">
+    <lucide-icon [img]="Tag" class="stroke-primary"></lucide-icon>
+    <p class="text-primary">Priority</p>
+</div>
+<app-select [items]="priorityOptions" [value]="value" title="Select priority" [selectClass]="'!w-40'"
+    (onSelected)="onPrioritySelect($event)"></app-select>

@@ -9,9 +9,4 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class Card {
   @Input() cardClass: string = '';
-  @Output() clicked = new EventEmitter();
-
-  onClick() {
-    this.clicked.emit();
-  }
 }

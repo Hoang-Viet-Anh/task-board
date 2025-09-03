@@ -9,7 +9,7 @@
         }">
         </lucide-icon>
     </app-button>
-    <div dropdownContent class="flex flex-col" [ngClass]="selectClass">
+    <div dropdownContent class="flex flex-col" [ngClass]="[selectClass]">
         @if (filteredList().length === 0) {
         <div class="flex items-center justify-center py-10 w-full">
             <p class="text-primary">No items available</p>

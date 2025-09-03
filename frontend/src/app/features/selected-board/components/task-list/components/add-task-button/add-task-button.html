@@ -1,12 +1,6 @@
-<app-button variant="ghost" [buttonClass]="'flex !rounded-xl w-full !p-0'" (clicked)="toggleDialog(true)">
-    <app-card class="w-full"
-        [cardClass]="'flex flex-row gap-2 items-center justify-center w-full p-4 border-dotted !border-2'">
-        <lucide-icon [img]="Plus" class="stroke-primary"></lucide-icon>
-        <p class="select-none text-primary text-sm">Add new card</p>
-    </app-card>
+<app-button variant="ghost"
+    [buttonClass]="'!rounded-xl flex flex-row gap-2 items-center justify-center w-full !p-4 !border-dotted !border-primary/40 !border-2'"
+    (clicked)="onAddTaskDialogOpen()">
+    <lucide-icon [img]="Plus" class="stroke-primary"></lucide-icon>
+    <p class="select-none text-primary text-sm">Add new card</p>
 </app-button>
-
-<app-dialog [open]="openDialog()" (onClose)="toggleDialog(false)" [cardClass]="'!p-0 !border-none'" [closeButtonClass]="'stroke-white'">
-    <app-add-task-dialog dialogContent class="flex flex-col w-2xl"
-        [column]="column"></app-add-task-dialog>
-</app-dialog>

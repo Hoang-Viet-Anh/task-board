@@ -1,0 +1,31 @@
+<app-button variant="ghost" (clicked)="closeDrawer()"
+    [buttonClass]="['absolute !p-2 right-4 top-4 hover:bg-secondary/20'].join(' ')">
+    <lucide-icon [img]="X" [size]="20" class="stroke-white"></lucide-icon>
+</app-button>
+<div class="flex flex-row items-center px-4 w-full h-16 bg-primary">
+    <h2 class="text-white text-xl font-semibold">History</h2>
+</div>
+<div class="flex flex-col p-4 gap-4 h-[calc(100vh-64px)] overflow-y-auto">
+    @for (item of (logs$ | async); track item.id) {
+    <div class="flex flex-row gap-2">
+        <lucide-icon [img]="Dot" [size]="32" class="stroke-primary"></lucide-icon>
+        <div class="flex flex-col gap-1">
+            <p class="text-start text-gray-700 whitespace-pre-line">{{item.log}}</p>
+            <p class="text-primary/70 italic">{{item.createdAt | date:'MMM d'}} at {{item.createdAt | date: 'HH:mm'}}
+            </p>
+        </div>
+    </div>
+    }
+    @if ((logs$ | async)?.length == 0) {
+    <div class="flex items-center justify-center h-24">
+        <p>No activity yet</p>
+    </div>
+    }
+    @else if ((logs$ | async)?.length ?? 0 >= 20) {
+    <app-button variant="outline" class="w-full" buttonClass="w-full justify-center items-center"
+        (clicked)="onLoadLogs()">
+        <lucide-icon [img]="Refresh" [size]="20"></lucide-icon>
+        Show more
+    </app-button>
+    }
+</div>

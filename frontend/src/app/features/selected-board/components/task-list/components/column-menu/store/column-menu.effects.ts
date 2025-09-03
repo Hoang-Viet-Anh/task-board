@@ -6,12 +6,14 @@ import { removeColumnFailure, removeColumnRequest, removeColumnSuccess, updateCo
 import { MessageService } from "primeng/api";
 import { getColumnsByBoardId } from "@app/features/selected-board/store/selected-board.actions";
 import { HttpErrorResponse } from "@angular/common/http";
+import { DialogService } from "@app/shared/services/dialog.service";
 
 @Injectable()
 export class ColumnMenuEffects {
     private actions$ = inject(Actions)
     private columnMenuService = inject(ColumnMenuService)
     private messageService = inject(MessageService)
+    private dialogService = inject(DialogService)
 
     updateColumn$ = createEffect(() =>
         this.actions$.pipe(
@@ -47,6 +49,7 @@ export class ColumnMenuEffects {
                             summary: "List removed",
                             severity: "success"
                         });
+                        this.dialogService.close()
                         return of(removeColumnSuccess(), getColumnsByBoardId({ id: action.boardId! }))
                     }),
                     catchError((error: HttpErrorResponse) => {

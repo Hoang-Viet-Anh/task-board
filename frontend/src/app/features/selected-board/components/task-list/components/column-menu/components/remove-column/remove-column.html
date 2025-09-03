@@ -1,19 +1,5 @@
-<div class="flex flex-col gap-6">
-    <h2 class="font-semibold text-lg">Remove List</h2>
-    <p>Are you sure you want to delete this List? This action cannot be undone.</p>
-    <div class="flex flex-row gap-2 w-full justify-end">
-        <app-button variant="secondary" [buttonClass]="'justify-center w-28'" (clicked)="closeDialog()"
-            [disabled]="(isLoading$ | async) ?? false">
-            Cancel
-        </app-button>
-        <app-button variant="destruction" [buttonClass]="'justify-center w-28'" (clicked)="onRemoveList()"
-            [disabled]="(isLoading$ | async) ?? false">
-            @if (isLoading$ | async) {
-            <lucide-icon [img]="LoaderCircle" [size]="20" class="animate-spin"></lucide-icon>
-            }
-            @else {
-            Remove
-            }
-        </app-button>
-    </div>
-</div>
+<app-button variant="ghost" [buttonClass]="'flex-row items-center gap-2 w-full !rounded-none'"
+    (clicked)="onRemoveDialogOpen()">
+    <lucide-icon [img]="Trash" [size]="20" class="stroke-destructive"></lucide-icon>
+    <p class="text-destructive">Remove</p>
+</app-button>

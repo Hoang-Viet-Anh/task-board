@@ -5,6 +5,7 @@ using TaskBoard.Application.Common.Dtos;
 using TaskBoard.Application.Common.Interfaces;
 using TaskBoard.Application.Tasks.Commands.CreateTask;
 using TaskBoard.Application.Tasks.Commands.DeleteTask;
+using TaskBoard.Application.Tasks.Commands.MoveTask;
 using TaskBoard.Application.Tasks.Commands.UpdateTask;
 using TaskBoard.Application.Tasks.Queries.GetTaskById;
 
@@ -40,6 +41,17 @@ public class TaskController : ControllerBase
         var userId = _currentUserService.GetUserId();
 
         var command = new UpdateTaskCommand(userId, TaskDto);
+        await _mediator.Send(command);
+
+        return Ok();
+    }
+
+    [HttpPost("move")]
+    public async Task<IActionResult> MoveTask([FromBody] TaskDto TaskDto)
+    {
+        var userId = _currentUserService.GetUserId();
+
+        var command = new MoveTaskCommand(userId, TaskDto);
         await _mediator.Send(command);
 
         return Ok();

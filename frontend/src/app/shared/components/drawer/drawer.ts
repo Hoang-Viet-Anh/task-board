@@ -1,26 +1,33 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Button } from "../button/button";
+import { AfterViewInit, Component, ViewChild, ViewContainerRef } from '@angular/core';
+import { DrawerService } from '@app/shared/services/drawer.service';
 import { LucideAngularModule, X } from "lucide-angular";
 
 @Component({
   selector: 'app-drawer',
-  imports: [CommonModule, Button, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './drawer.html',
   styleUrl: './drawer.css'
 })
-export class Drawer {
-  readonly X = X;
+export class Drawer implements AfterViewInit {
+  @ViewChild('drawerContainer', { read: ViewContainerRef }) container!: ViewContainerRef;
+  readonly X = X
 
-  @Input() open: boolean = false;
-  @Input() drawerClass: string = '';
-  @Output() onClose = new EventEmitter<void>();
+  constructor(private drawerService: DrawerService) { }
 
-  closeDrawer() {
-    this.onClose.emit();
+  ngAfterViewInit(): void {
+    this.drawerService.registerContainer(this.container);
   }
 
-  drawerClick(event: Event) {
-    event.stopPropagation();
+  isOpen() {
+    return this.drawerService.isOpen()
+  }
+
+  closeDrawer() {
+    this.drawerService.close()
+  }
+
+  preventDrawerClose(event: Event) {
+    event.stopPropagation()
   }
 }

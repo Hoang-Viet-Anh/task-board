@@ -1,0 +1,10 @@
+<app-card [cardClass]="[
+                'relative p-8 flex flex-col items-start justify-start min-w-2xs bg-white !overflow-visible !border-none',
+                cardClass
+                ].join(' ')">
+    <app-button variant="ghost" (clicked)="closeDialog()"
+        [buttonClass]="['absolute !p-2 right-4 top-4 hover:bg-secondary/20', closeButtonClass].join(' ')">
+        <lucide-icon [img]="X" [size]="20" class="stroke-inherit"></lucide-icon>
+    </app-button>
+    <ng-content></ng-content>
+</app-card>

@@ -5,12 +5,14 @@ import { catchError, map, mergeMap, of } from "rxjs";
 import { getBoards, getBoardsFailure, getBoardsSuccess, removeBoard, removeBoardFailure, removeBoardSuccess, updateBoard, updateBoardFailure, updateBoardSuccess } from "./board.actions";
 import { HttpErrorResponse } from "@angular/common/http";
 import { MessageService } from "primeng/api";
+import { DialogService } from "@app/shared/services/dialog.service";
 
 @Injectable()
 export class BoardEffects {
     private actions$ = inject(Actions)
     private boardService = inject(BoardService)
     private messageService = inject(MessageService)
+    private dialogService = inject(DialogService)
 
     getBoards$ = createEffect(() =>
         this.actions$.pipe(
@@ -38,6 +40,7 @@ export class BoardEffects {
                             summary: "Board updated",
                             severity: "success"
                         });
+                        this.dialogService.close()
                         return of(updateBoardSuccess(), getBoards())
                     }),
                     catchError((error: HttpErrorResponse) => {
@@ -62,6 +65,7 @@ export class BoardEffects {
                             summary: "Board removed",
                             severity: "success"
                         });
+                        this.dialogService.close()
                         return of(removeBoardSuccess(), getBoards())
                     }),
                     catchError((error: HttpErrorResponse) => {

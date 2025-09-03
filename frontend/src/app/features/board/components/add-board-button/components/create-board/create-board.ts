@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Button } from "@app/shared/components/button/button";
 import { LoaderCircle, LucideAngularModule } from "lucide-angular";
 import { CommonModule } from '@angular/common';
@@ -15,7 +15,7 @@ import { selectAddBoardStatus } from '../../store/add-board.selectors';
   templateUrl: './create-board.html',
   styleUrl: './create-board.css'
 })
-export class CreateBoard {
+export class CreateBoard implements OnInit {
   readonly LoaderCircle = LoaderCircle
 
   createBoardForm: FormGroup = new FormGroup({
@@ -23,14 +23,14 @@ export class CreateBoard {
   })
 
   isLoading$: Observable<boolean>;
-  isSuccess$: Observable<boolean>;
 
   constructor(private readonly store: Store) {
     this.isLoading$ = this.store.select(selectAddBoardStatus).pipe(map(status => status?.isLoading))
-    this.isSuccess$ = this.store.select(selectAddBoardStatus).pipe(map(status => status?.isSuccess))
+  }
 
-    this.isSuccess$.subscribe(success => {
-      if (success) this.createBoardForm.patchValue({ boardTitle: '' })
+  ngOnInit(): void {
+    this.createBoardForm.patchValue({
+      boardTitle: ''
     })
   }
 

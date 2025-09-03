@@ -6,7 +6,6 @@ import {
 import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
-import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { RegisterEffects } from '@app/features/auth/registration/store/register.effects';
 import { LoginEffects } from '@app/features/auth/login/store/login.effects';
 import { loginFeatureKey } from '@app/features/auth/login/store/login.selectors';
@@ -29,17 +28,15 @@ import { addListReducer } from '@app/features/selected-board/components/add-list
 import { ColumnMenuEffects } from '@app/features/selected-board/components/task-list/components/column-menu/store/column-menu.effects';
 import { columnMenuFeatureKey } from '@app/features/selected-board/components/task-list/components/column-menu/store/column-menu.selectors';
 import { columnMenuReducer } from '@app/features/selected-board/components/task-list/components/column-menu/store/column-menu.reducer';
+import { TaskEffects } from '@app/features/selected-board/components/task-list/store/task.effects';
+import { taskFeatureKey } from '@app/features/selected-board/components/task-list/store/task.selectors';
+import { taskReducer } from '@app/features/selected-board/components/task-list/store/task.reducer';
 
 export const CORE_PROVIDERS = [
   provideHttpClient(withInterceptorsFromDi()),
   {
     provide: HTTP_INTERCEPTORS,
     useClass: ErrorInterceptor,
-    multi: true,
-  },
-  {
-    provide: HTTP_INTERCEPTORS,
-    useClass: AuthInterceptor,
     multi: true,
   },
   provideEffects([
@@ -50,7 +47,8 @@ export const CORE_PROVIDERS = [
     BoardEffects,
     SelectedBoardEffects,
     AddListEffects,
-    ColumnMenuEffects
+    ColumnMenuEffects,
+    TaskEffects
   ]),
   provideStore({
     [loginFeatureKey]: loginReducer,
@@ -59,6 +57,7 @@ export const CORE_PROVIDERS = [
     [boardFeatureKey]: boardReducer,
     [selectedBoardFeatureKey]: selectedBoardReducer,
     [addListFeatureKey]: addListReducer,
-    [columnMenuFeatureKey]: columnMenuReducer
+    [columnMenuFeatureKey]: columnMenuReducer,
+    [taskFeatureKey]: taskReducer
   })
 ];

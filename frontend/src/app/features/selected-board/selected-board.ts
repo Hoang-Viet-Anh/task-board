@@ -1,24 +1,25 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Button } from "@app/shared/components/button/button";
 import { History, LucideAngularModule } from "lucide-angular";
 import { TaskList } from "./components/task-list/task-list";
 import { Store } from '@ngrx/store';
 import { getBoardById } from './store/selected-board.actions';
 import { map, Observable } from 'rxjs';
-import { selectGetColumnsByBoardIdStatus, selectSelectedBoard, selectSelectedBoardColumns, selectSelectedBoardState } from './store/selected-board.selectors';
+import { selectGetColumnsByBoardIdStatus, selectSelectedBoard, selectSelectedBoardColumns } from './store/selected-board.selectors';
 import { CommonModule } from '@angular/common';
 import { ColumnEntity } from './models/column.model';
 import { InviteCodeCard } from "./components/invite-code-card/invite-code-card";
 import { AddListCard } from "./components/add-list-card/add-list-card";
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { HistoryActions } from "./components/history-actions/history-actions";
 
 @Component({
   selector: 'app-selected-board',
-  imports: [Button, LucideAngularModule, TaskList, CommonModule, AddListCard],
+  imports: [LucideAngularModule, TaskList, CommonModule, AddListCard, DragDropModule, HistoryActions],
   templateUrl: './selected-board.html',
   styleUrl: './selected-board.css',
   host: {
-    class: 'flex flex-col items-center w-full h-full pt-6 gap-10'
+    class: 'flex flex-col items-center gap-10'
   }
 })
 export class SelectedBoard implements OnInit {

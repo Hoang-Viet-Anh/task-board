@@ -1,0 +1,6 @@
+<div class="flex flex-row gap-2 items-center">
+    <lucide-icon [img]="List" class="stroke-primary"></lucide-icon>
+    <p class="text-primary">List</p>
+</div>
+<app-select [items]="(columnsToSelectEntity() | async) ?? []" [value]="value" [selectClass]="'!w-40'"
+    (onSelected)="onListSelect($event)"></app-select>

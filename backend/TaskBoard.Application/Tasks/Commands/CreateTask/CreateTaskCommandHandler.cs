@@ -1,8 +1,10 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using TaskBoard.Application.ActivityLogs.Commands.CreateLog;
 using TaskBoard.Application.Common.Dtos;
 using TaskBoard.Application.Common.Exceptions;
 using TaskBoard.Application.Common.Interfaces;
+using TaskBoard.Domain.Entities;
 using TaskBoard.Domain.Enums;
 using TaskEntity = TaskBoard.Domain.Entities.Task;
 
@@ -13,10 +15,12 @@ public record CreateTaskCommand(Guid UserId, TaskDto TaskDto) : IRequest<Unit>;
 public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Unit>
 {
     public readonly IApplicationDbContext _context;
+    public readonly IMediator _mediator;
 
-    public CreateTaskCommandHandler(IApplicationDbContext context)
+    public CreateTaskCommandHandler(IApplicationDbContext context, IMediator mediator)
     {
         _context = context;
+        _mediator = mediator;
     }
 
     public async Task<Unit> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
@@ -26,7 +30,7 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Unit>
         var column = await _context.Columns
             .Include(c => c.Board)
             .ThenInclude(b => b.UserBoards)
-            .FirstOrDefaultAsync(c => c.Id == Guid.Parse(request.TaskDto.ColumnId), cancellationToken: cancellationToken) ?? throw new NotFoundException("Column not found");
+            .FirstOrDefaultAsync(c => c.Id == request.TaskDto.ColumnId, cancellationToken: cancellationToken) ?? throw new NotFoundException("Column not found");
 
         if (!column.Board.UserBoards.Any(ub => ub.UserId == user.Id)) throw new ForbiddenException();
 
@@ -35,14 +39,24 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Unit>
             Title = request.TaskDto.Title!,
             Description = request.TaskDto.Description!,
             DueDate = request.TaskDto.DueDate ?? DateTime.UtcNow,
-            Priority = Enum.Parse<TaskPriority>(request.TaskDto.Priority!.ToLower()),
+            Priority = Enum.Parse<TaskPriority>(request.TaskDto.Priority!.ToUpper()),
             Column = column,
             ColumnId = column.Id
         };
         await _context.Tasks.AddAsync(task, cancellationToken: cancellationToken);
 
-
-        await _context.SaveChangesAsync(cancellationToken);
+        var log = new TaskActivityLog
+        {
+            Board = column.Board,
+            BoardId = column.BoardId,
+            Task = task,
+            TaskId = task.Id,
+            User = user,
+            UserId = user.Id,
+            Log = $"{user.Username} created \"{task.Title}\""
+        };
+        var command = new CreateLogCommand(log);
+        await _mediator.Send(command, cancellationToken);
 
         return Unit.Value;
     }

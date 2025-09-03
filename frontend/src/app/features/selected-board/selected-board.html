@@ -2,14 +2,11 @@
     <h1 class="font-semibold text-2xl">{{boardTitle$ | async}}</h1>
     <div class="flex flex-row gap-4">
         <!-- <app-invite-code-card></app-invite-code-card> -->
-        <app-button variant="outline" [buttonClass]="'flex flex-row gap-2 justify-center'">
-            <lucide-icon [img]="History" [size]="20" class="mt-0.5"></lucide-icon>
-            <p>History</p>
-        </app-button>
+        <app-history-actions [boardId]="boardId"></app-history-actions>
     </div>
 </div>
 
-<div class="flex flex-row gap-4 w-full h-full max-w-7xl overflow-auto">
+<div class="flex flex-row gap-4 min-w-7xl max-w-8xl overflow-x-auto h-[calc(100vh-200px)]" cdkDropListGroup>
     @for (item of (boardColumns$ | async); track item.id) {
     <app-task-list [column]="item"></app-task-list>
     }
