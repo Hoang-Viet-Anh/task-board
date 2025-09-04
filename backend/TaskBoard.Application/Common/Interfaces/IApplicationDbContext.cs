@@ -11,6 +11,7 @@ public interface IApplicationDbContext
     public DbSet<Domain.Entities.Task> Tasks { get; }
     public DbSet<TaskActivityLog> TaskActivityLogs { get; }
     public DbSet<UserBoard> UserBoards { get; }
+    public DbSet<UserTask> UserTasks { get; }
     public DbSet<RefreshToken> RefreshTokens { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

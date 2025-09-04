@@ -10,7 +10,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
-        
+
     }
     public DbSet<User> Users => Set<User>();
     public DbSet<Board> Boards => Set<Board>();
@@ -18,9 +18,9 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Domain.Entities.Task> Tasks => Set<Domain.Entities.Task>();
     public DbSet<TaskActivityLog> TaskActivityLogs => Set<TaskActivityLog>();
     public DbSet<UserBoard> UserBoards => Set<UserBoard>();
-    public DbSet<UserTask> TaskBoards => Set<UserTask>();
+    public DbSet<UserTask> UserTasks => Set<UserTask>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
-    
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

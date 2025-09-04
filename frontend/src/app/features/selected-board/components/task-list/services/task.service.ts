@@ -24,4 +24,8 @@ export class TaskService {
     moveTask(task: TaskEntity): Observable<any> {
         return this.apiService.post<any>('task/move', task)
     }
+
+    assignTask(task: TaskEntity, userId: string): Observable<any> {
+        return this.apiService.post<any>('task/assign', { taskId: task.id, asigneeId: userId })
+    }
 }

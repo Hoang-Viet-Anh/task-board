@@ -21,7 +21,8 @@ export class Dialog implements AfterViewInit {
     return this.dialogService.isOpen();
   }
 
-  closeDialog() {
+  closeDialog(event: Event) {
+    event.stopPropagation()
     this.dialogService.close();
   }
 

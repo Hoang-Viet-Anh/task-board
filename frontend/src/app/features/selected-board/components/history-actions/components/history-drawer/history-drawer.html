@@ -1,5 +1,4 @@
-<app-button variant="ghost" (clicked)="closeDrawer()"
-    [buttonClass]="['absolute !p-2 right-4 top-4 hover:bg-secondary/20'].join(' ')">
+<app-button variant="ghost" (clicked)="closeDrawer()" buttonClass="absolute !p-2 right-4 top-4 hover:bg-secondary/20 !w-fit">
     <lucide-icon [img]="X" [size]="20" class="stroke-white"></lucide-icon>
 </app-button>
 <div class="flex flex-row items-center px-4 w-full h-16 bg-primary">
@@ -21,7 +20,7 @@
         <p>No activity yet</p>
     </div>
     }
-    @else if ((logs$ | async)?.length ?? 0 >= 20) {
+    @else if ((logs$ | async)!.length >= 20) {
     <app-button variant="outline" class="w-full" buttonClass="w-full justify-center items-center"
         (clicked)="onLoadLogs()">
         <lucide-icon [img]="Refresh" [size]="20"></lucide-icon>

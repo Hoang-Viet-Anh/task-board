@@ -1,6 +1,6 @@
 <div class="fixed inset-0 flex items-center justify-center bg-black/50 z-30 transition-opacity duration-200 opacity-0 pointer-events-none"
-    [ngClass]="[isOpen() ? '!opacity-100 !pointer-events-auto' : '']" (click)="closeDialog()">
-    <div (click)="onDialogClick($event)">
+    [ngClass]="[isOpen() ? '!opacity-100 !pointer-events-auto' : '']" (click)="closeDialog($event)">
+    <div (click)="onDialogClick($event)" class="w-auto h-auto">
         <ng-template #dialogContainer></ng-template>
     </div>
 </div>

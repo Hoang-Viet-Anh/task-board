@@ -32,7 +32,7 @@ public class GetLogByBoardIdQueryHandler : IRequestHandler<GetLogByBoardIdQuery,
 
         var activityLogs = await _context.TaskActivityLogs
             .Where(l => l.BoardId == request.BoardId)
-            .OrderBy(l => l.CreatedAt)
+            .OrderByDescending(l => l.CreatedAt)
             .Skip(request.Page * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken: cancellationToken);

@@ -11,12 +11,14 @@ public class EntityMappingProfiles : Profile
     {
         CreateMap<User, UserDto>();
         CreateMap<TaskActivityLog, TaskActivityLogDto>();
-        
+
         CreateMap<TaskEntity, TaskDto>()
             .ForMember(dest => dest.AssignedUsers, opt => opt.MapFrom(src => src.UserTasks.Select(ut => ut.User)))
             .ForMember(dest => dest.Priority, opt => opt.MapFrom(src => src.Priority.ToString().ToLower()));
 
         CreateMap<Column, ColumnDto>();
-        CreateMap<Board, BoardDto>();
+        CreateMap<Board, BoardDto>()
+            .ForMember(dest => dest.Members, opt => opt.MapFrom(src => src.UserBoards.Select(ub => ub.User)));
+
     }
 }

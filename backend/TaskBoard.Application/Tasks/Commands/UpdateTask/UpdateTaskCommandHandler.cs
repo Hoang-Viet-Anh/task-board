@@ -82,7 +82,7 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, Unit>
             TaskId = task.Id,
             User = user,
             UserId = user.Id,
-            Log = $"{user.Username} updated \"{task.Title}\":\n\n{log}"
+            Log = $"{user.Username} updated \"{task.Title}\":\n{log}"
         };
         var command = new CreateLogCommand(activityLog);
         await _mediator.Send(command, cancellationToken);

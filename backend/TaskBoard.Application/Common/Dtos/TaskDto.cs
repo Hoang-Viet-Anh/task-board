@@ -9,5 +9,6 @@ public class TaskDto
     public DateTime? DueDate { get; set; }
     public string? Priority { get; set; }
     public List<UserDto> AssignedUsers { get; set; } = [];
+    public List<TaskActivityLogDto> TaskActivityLogs { get; set; } = [];
     public DateTime? CreatedAt { get; set; }
 }

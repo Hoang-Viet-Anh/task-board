@@ -4,6 +4,7 @@ import { RequestStatus } from "@app/shared/models/request.status";
 import { createReducer, on } from "@ngrx/store";
 import { getColumnsByBoardId, getColumnsByBoardIdSuccess, getBoardById, getBoardByIdSuccess, getBoardByIdFailure, getColumnsByBoardIdFailure, clearBoard, changeTaskList, getLogsByBoardIdSuccess, loadMoreLogs, loadMoreLogsSuccess } from "./selected-board.actions";
 import { Log } from "../models/log.model";
+import { assignTaskRequest } from "../components/task-list/store/task.actions";
 
 export interface SelectedBoardState {
     boardStatus: RequestStatus,
@@ -100,6 +101,21 @@ export const selectedBoardReducer = createReducer(
                     tasks: updatedTasks
                 })
             })
+        })
+    }),
+
+    on(assignTaskRequest, (state, action) => {
+        return ({
+            ...state,
+            columns: state.columns.map(c => ({
+                ...c,
+                tasks: c.tasks?.map(t =>
+                    t.id === action.task.id
+                        ? { ...t, assignedUsers: [...(t.assignedUsers ?? []), { id: action.userId }] }
+                        : t
+                )
+            }))
+
         })
     }),
 

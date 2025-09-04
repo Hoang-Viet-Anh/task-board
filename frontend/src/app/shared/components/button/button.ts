@@ -12,9 +12,9 @@ export class Button {
   @Input() disabled: boolean | null = false;
   @Input() buttonClass: string = '';
 
-  @Output() clicked = new EventEmitter<void>();
+  @Output() clicked = new EventEmitter<Event>();
 
-  onClick() {
-    this.clicked.emit();
+  onClick(event: Event) {
+    this.clicked.emit(event);
   }
 }

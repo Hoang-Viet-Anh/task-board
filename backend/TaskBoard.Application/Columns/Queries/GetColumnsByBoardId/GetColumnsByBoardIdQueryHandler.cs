@@ -28,11 +28,17 @@ public class GetColumnsByBoardIdHandler : IRequestHandler<GetColumnsByBoardId, L
             .Include(b => b.Columns)
             .ThenInclude(c => c.Tasks)
             .ThenInclude(t => t.UserTasks)
+            .ThenInclude(ut => ut.User)
+            .Include(b => b.Columns)
+            .ThenInclude(c => c.Tasks)
+            .ThenInclude(t => t.TaskActivityLogs)
             .FirstOrDefaultAsync(b => b.Id == request.BoardId, cancellationToken: cancellationToken) ?? throw new NotFoundException("Board not found");
 
         if (!board.UserBoards.Any(ub => ub.UserId == user.Id)) throw new ForbiddenException();
 
         var columns = board.Columns.OrderBy(c => c.CreatedAt).ToList();
+
+        columns.ForEach(cd => cd.Tasks.ForEach(t => t.TaskActivityLogs = t.TaskActivityLogs.OrderByDescending(l => l.CreatedAt).ToList()));
 
         columns.ForEach(cd => cd.Tasks = cd.Tasks.OrderBy(t => t.DueDate)
                             .ThenByDescending(t => t.Priority)

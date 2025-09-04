@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskBoard.Application.Common.Dtos;
 using TaskBoard.Application.Common.Interfaces;
+using TaskBoard.Application.Tasks.Commands.AssignTask;
 using TaskBoard.Application.Tasks.Commands.CreateTask;
 using TaskBoard.Application.Tasks.Commands.DeleteTask;
 using TaskBoard.Application.Tasks.Commands.MoveTask;
@@ -57,6 +58,17 @@ public class TaskController : ControllerBase
         return Ok();
     }
 
+    [HttpPost("assign")]
+    public async Task<IActionResult> AssignTask([FromBody] AssignDto AssignDto)
+    {
+        var userId = _currentUserService.GetUserId();
+
+        var command = new AssignTaskCommand(userId, AssignDto);
+        await _mediator.Send(command);
+
+        return Ok();
+    }
+
     [HttpGet("{TaskId}")]
     public async Task<IActionResult> GetTaskById(Guid TaskId)
     {
@@ -65,7 +77,7 @@ public class TaskController : ControllerBase
         var query = new GetTaskByIdQuery(userId, TaskId);
         var TaskDto = await _mediator.Send(query);
 
-        return Ok();
+        return Ok(TaskDto);
     }
 
     [HttpDelete("delete/{TaskId}")]

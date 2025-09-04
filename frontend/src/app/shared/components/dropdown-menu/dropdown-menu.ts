@@ -34,12 +34,13 @@ export class DropdownMenu implements AfterViewInit, OnDestroy {
     this.cleanup?.();
   }
 
-  closeDropdown() {
+  closeDropdown(event: Event) {
+    event.stopPropagation()
     this.onClose.emit();
   }
 
   onDropdownClick(event: Event) {
-    event.stopPropagation();
+    this.closeDropdown(event)
   }
 
   updatePosition() {

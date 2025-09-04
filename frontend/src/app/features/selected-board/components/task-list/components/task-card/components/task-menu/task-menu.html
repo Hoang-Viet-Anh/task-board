@@ -1,6 +1,6 @@
 <app-dropdown-menu [open]="isDropdownOpen()" (onClose)="toggleDropdown(false)">
     <app-button dropdownTrigger variant="ghost" [buttonClass]="'!p-2 !rounded-full'"
-        (clicked)="toggleDropdown()">
+        (clicked)="toggleDropdown(true, $event)">
         <lucide-icon [img]="EllipsisVertical" [size]="20"></lucide-icon>
     </app-button>
     <div dropdownContent class="flex flex-col" (click)="toggleDropdown(false)">

@@ -1,4 +1,4 @@
-<button class="flex flex-row gap-2 py-2 px-6 rounded-md disabled:opacity-50 transition-colors duration-300 disabled:pointer-events-none"
+<button class="flex flex-row gap-2 py-2 px-6 w-full rounded-md disabled:opacity-50 transition-colors duration-300 disabled:pointer-events-none"
     [ngClass]="[
     variant == 'primary' ? 'bg-primary text-white stroke-white hover:bg-primary/80' : '',
     variant == 'secondary' ? 'bg-secondary/60 text-font-primary stroke-font-primary hover:bg-secondary' : '',
@@ -7,6 +7,6 @@
     variant == 'link' ? 'bg-transparent text-font-primary stroke-font-primary hover:underline-offset-4 hover:underline' : '',
     variant == 'destruction' ? 'bg-destructive text-white stroke-white hover:bg-destructive/80' : '',
     buttonClass
-    ]" [disabled]="disabled" (click)="onClick()">
+    ]" [disabled]="disabled" (click)="onClick($event)">
     <ng-content></ng-content>
 </button>

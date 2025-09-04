@@ -31,7 +31,8 @@ export class TaskMenu {
     private dialogService: DialogService
   ) { }
 
-  toggleDropdown(state?: boolean) {
+  toggleDropdown(state?: boolean, event?: Event) {
+    if (event) event.stopPropagation()
     this.isDropdownOpen.set(state ?? !this.isDropdownOpen())
   }
 

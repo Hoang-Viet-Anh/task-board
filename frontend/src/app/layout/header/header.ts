@@ -11,7 +11,7 @@ import { logoutAction } from './store/header.actions';
   imports: [Button, CommonModule, LucideAngularModule, RouterModule],
   templateUrl: './header.html',
   styleUrl: './header.css',
-  host: { class: 'flex flex-col w-screen h-screen' }
+  host: { class: 'flex flex-col w-screen h-screen overflow-hidden' }
 })
 export class HeaderLayout {
   readonly Logout = LogOut

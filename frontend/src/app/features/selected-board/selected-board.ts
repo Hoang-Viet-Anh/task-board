@@ -15,7 +15,7 @@ import { HistoryActions } from "./components/history-actions/history-actions";
 
 @Component({
   selector: 'app-selected-board',
-  imports: [LucideAngularModule, TaskList, CommonModule, AddListCard, DragDropModule, HistoryActions],
+  imports: [LucideAngularModule, TaskList, CommonModule, AddListCard, DragDropModule, HistoryActions, InviteCodeCard],
   templateUrl: './selected-board.html',
   styleUrl: './selected-board.css',
   host: {

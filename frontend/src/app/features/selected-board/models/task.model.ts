@@ -1,3 +1,4 @@
+import { Log } from "./log.model";
 import { UserEntity } from "./user.model";
 
 export interface TaskEntity {
@@ -7,5 +8,6 @@ export interface TaskEntity {
     description?: string,
     dueDate?: Date,
     priority?: string,
-    assignedUsers?: UserEntity[]
+    assignedUsers?: UserEntity[],
+    taskActivityLogs?: Log[]
 }

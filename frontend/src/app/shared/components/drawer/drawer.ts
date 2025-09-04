@@ -23,7 +23,8 @@ export class Drawer implements AfterViewInit {
     return this.drawerService.isOpen()
   }
 
-  closeDrawer() {
+  closeDrawer(event: Event) {
+    event.stopPropagation()
     this.drawerService.close()
   }
 

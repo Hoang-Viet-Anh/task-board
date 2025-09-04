@@ -32,7 +32,8 @@ export class ChangeListDropdown {
     this.columnList$ = this.store.select(selectSelectedBoardColumns)
   }
 
-  toggleDropdown(state?: boolean) {
+  toggleDropdown(state?: boolean, event?: Event) {
+    if (event) event.stopPropagation()
     this.open.set(state ?? !this.open());
   }
 

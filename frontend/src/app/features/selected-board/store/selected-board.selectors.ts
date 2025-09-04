@@ -12,3 +12,4 @@ export const selectSelectedBoard = createSelector(selectSelectedBoardState, stat
 export const selectSelectedBoardColumns = createSelector(selectSelectedBoardState, state => state.columns)
 export const selectSelectedBoardLogs = createSelector(selectSelectedBoardState, state => state.logs)
 export const selectLogsPage = createSelector(selectSelectedBoardState, state => state.logPage)
+export const selectBoardMembers = createSelector(selectSelectedBoardState, state => state.board?.members)

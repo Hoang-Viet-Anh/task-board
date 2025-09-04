@@ -1,4 +1,5 @@
 import { ColumnEntity } from "@app/features/selected-board/models/column.model";
+import { UserEntity } from "@app/features/selected-board/models/user.model";
 
 export interface BoardEntity {
     id: string,
@@ -6,5 +7,6 @@ export interface BoardEntity {
     inviteCode?: string,
     isOwner?: boolean,
     ownerId?: string,
-    columns?: ColumnEntity[]
+    columns?: ColumnEntity[],
+    members?: UserEntity[]
 }
