@@ -24,9 +24,13 @@ public class CreateColumnCommandHandler : IRequestHandler<CreateColumnCommand, U
         if (request.ColumnDto.BoardId == null) throw new BadRequestException();
         var board = await _context.Boards
         .Include(b => b.UserBoards)
+        .Include(b => b.Columns)
         .FirstOrDefaultAsync(b => b.Id == Guid.Parse(request.ColumnDto.BoardId), cancellationToken: cancellationToken) ?? throw new NotFoundException("Board is not found");
 
         if (!board.UserBoards.Any(ub => ub.UserId == user.Id)) throw new ForbiddenException();
+
+        var lastColumn = board.Columns.OrderBy(c => c.Order).LastOrDefault();
+        var order = lastColumn != null ? lastColumn.Order + 1000 : 1000;
 
         if (request.ColumnDto.Title != null)
         {
@@ -34,7 +38,8 @@ public class CreateColumnCommandHandler : IRequestHandler<CreateColumnCommand, U
             {
                 Title = request.ColumnDto.Title,
                 BoardId = board.Id,
-                Board = board
+                Board = board,
+                Order = order
             };
             await _context.Columns.AddAsync(column, cancellationToken: cancellationToken);
         }

@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 import { ColumnEntity } from './models/column.model';
 import { InviteCodeCard } from "./components/invite-code-card/invite-code-card";
 import { AddListCard } from "./components/add-list-card/add-list-card";
-import { DragDropModule } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { HistoryActions } from "./components/history-actions/history-actions";
 
 @Component({
@@ -18,9 +18,6 @@ import { HistoryActions } from "./components/history-actions/history-actions";
   imports: [LucideAngularModule, TaskList, CommonModule, AddListCard, DragDropModule, HistoryActions, InviteCodeCard],
   templateUrl: './selected-board.html',
   styleUrl: './selected-board.css',
-  host: {
-    class: 'flex flex-col items-center gap-10'
-  }
 })
 export class SelectedBoard implements OnInit {
   readonly History = History
@@ -51,4 +48,8 @@ export class SelectedBoard implements OnInit {
       this.store.dispatch(getBoardById({ id: this.boardId }))
   }
 
+  onColumnDrop(event: CdkDragDrop<any>) {
+    console.log(event.previousIndex)
+    console.log(event.currentIndex)
+  }
 }

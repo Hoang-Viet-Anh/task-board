@@ -4,5 +4,6 @@ export interface ColumnEntity {
     id?: string,
     title?: string,
     boardId?: string,
-    tasks?: TaskEntity[]
+    tasks?: TaskEntity[],
+    order?: number
 }

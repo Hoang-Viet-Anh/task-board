@@ -41,6 +41,6 @@ export class ChangeListDropdown {
     if (selectedColumn.id == this.column.id)
       return;
 
-    this.store.dispatch(changeTaskList({ task: this.task, newColumn: { id: selectedColumn.id, boardId: this.column.boardId! } }))
+    this.store.dispatch(changeTaskList({ task: this.task, currentColumn: selectedColumn, previousColumn: this.column }))
   }
 }

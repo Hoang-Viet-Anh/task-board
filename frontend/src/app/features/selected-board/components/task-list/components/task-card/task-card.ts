@@ -10,10 +10,11 @@ import { TaskMenu } from "./components/task-menu/task-menu";
 import { ColumnEntity } from '@app/features/selected-board/models/column.model';
 import { DialogService } from '@app/shared/services/dialog.service';
 import { TaskDialog } from './components/task-dialog/task-dialog';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-task-card',
-  imports: [Card, CommonModule, LucideAngularModule, Badge, ChangeListDropdown, TaskMenu],
+  imports: [Card, CommonModule, LucideAngularModule, Badge, ChangeListDropdown, TaskMenu, DragDropModule],
   templateUrl: './task-card.html',
   styleUrl: './task-card.css'
 })
@@ -24,6 +25,7 @@ export class TaskCard {
 
   @Input() task!: TaskEntity
   @Input() column!: ColumnEntity
+  @Input() isDragged: boolean = false
 
   constructor(private dialogService: DialogService) {
 
@@ -34,9 +36,10 @@ export class TaskCard {
   }
 
   openTaskDialog() {
-    this.dialogService.open(TaskDialog, {
-      task: this.task,
-      column: this.column
-    })
+    if (!this.isDragged)
+      this.dialogService.open(TaskDialog, {
+        task: this.task,
+        column: this.column
+      })
   }
 }

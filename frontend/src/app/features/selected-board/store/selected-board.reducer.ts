@@ -79,45 +79,21 @@ export const selectedBoardReducer = createReducer(
         }
     })),
 
-    on(changeTaskList, (state, action) => {
-        return ({
-            ...state,
-            columns: state.columns.map(c => {
-                const oldTasks = c.tasks ?? []
+    on(changeTaskList, (state, action) => ({
+        ...state,
+        columns: state.columns.map(c =>
+            c.id === action.currentColumn.id ? { ...action.currentColumn } :
+                c.id === action.previousColumn.id ? { ...action.previousColumn } :
+                    c)
+    })),
 
-                const filteredTasks = c.id === action.task.columnId
-                    ? oldTasks.filter(t => t.id !== action.task.id)
-                    : oldTasks;
-
-                const updatedTasks = c.id === action.newColumn.id
-                    ? [...filteredTasks, { ...action.task, columnId: action.newColumn.id }].sort(
-                        (a, b) => a.dueDate!.getTime() - b.dueDate!.getTime()
-                    )
-                    : filteredTasks;
-
-
-                return ({
-                    ...c,
-                    tasks: updatedTasks
-                })
-            })
-        })
-    }),
-
-    on(assignTaskRequest, (state, action) => {
-        return ({
-            ...state,
-            columns: state.columns.map(c => ({
-                ...c,
-                tasks: c.tasks?.map(t =>
-                    t.id === action.task.id
-                        ? { ...t, assignedUsers: [...(t.assignedUsers ?? []), { id: action.userId }] }
-                        : t
-                )
-            }))
-
-        })
-    }),
+    on(assignTaskRequest, (state, action) => ({
+        ...state,
+        columns: state.columns.map(c => c.id === action.task.columnId ? {
+            ...c,
+            tasks: c.tasks?.map(t => t.id === action.task.id ? { ...action.task } : t)
+        } : c)
+    })),
 
     on(getLogsByBoardIdSuccess, (state, action) => ({
         ...state,
@@ -128,6 +104,7 @@ export const selectedBoardReducer = createReducer(
         ...state,
         logPage: state.logPage + 1
     })),
+
     on(loadMoreLogsSuccess, (state, action) => ({
         ...state,
         logs: [...state.logs, ...action.logs]
