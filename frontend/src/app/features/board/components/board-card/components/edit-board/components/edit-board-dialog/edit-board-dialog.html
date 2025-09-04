@@ -1,0 +1,16 @@
+<app-dialog-layout>
+    <div class="flex flex-col items-center gap-4 w-96">
+        <h2 class="font-semibold text-lg">Edit Board</h2>
+        <app-input class="w-full" placeholder="Board Title" [value]="this.boardTitle()"
+            [disabled]="(isLoading$ | async) ?? false" (onValueChange)="onBoardTitleChange($event)"></app-input>
+        <app-button class="w-full" [buttonClass]="'justify-center w-full'" (clicked)="onEditSubmit()"
+            [disabled]="(isLoading$ | async) ?? false">
+            @if (isLoading$ | async) {
+            <lucide-icon [img]="LoaderCircle" [size]="20" class="animate-spin"></lucide-icon>
+            }
+            @else {
+            Save
+            }
+        </app-button>
+    </div>
+</app-dialog-layout>

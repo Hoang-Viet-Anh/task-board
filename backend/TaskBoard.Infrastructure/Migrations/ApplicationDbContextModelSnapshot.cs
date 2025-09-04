@@ -31,10 +31,26 @@ namespace TaskBoard.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("InviteCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("InviteCode")
+                        .IsUnique();
+
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Boards");
                 });
@@ -63,6 +79,35 @@ namespace TaskBoard.Infrastructure.Migrations
                     b.HasIndex("BoardId");
 
                     b.ToTable("Columns");
+                });
+
+            modelBuilder.Entity("TaskBoard.Domain.Entities.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("TaskBoard.Domain.Entities.Task", b =>
@@ -120,7 +165,7 @@ namespace TaskBoard.Infrastructure.Migrations
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("TaskId")
+                    b.Property<Guid?>("TaskId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("UserId")
@@ -188,6 +233,44 @@ namespace TaskBoard.Infrastructure.Migrations
                     b.ToTable("UserBoards");
                 });
 
+            modelBuilder.Entity("TaskBoard.Domain.Entities.UserTask", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("TaskId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TaskId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserTasks");
+                });
+
+            modelBuilder.Entity("TaskBoard.Domain.Entities.Board", b =>
+                {
+                    b.HasOne("TaskBoard.Domain.Entities.User", "Owner")
+                        .WithMany("OwnedBoards")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Owner");
+                });
+
             modelBuilder.Entity("TaskBoard.Domain.Entities.Column", b =>
                 {
                     b.HasOne("TaskBoard.Domain.Entities.Board", "Board")
@@ -197,6 +280,17 @@ namespace TaskBoard.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Board");
+                });
+
+            modelBuilder.Entity("TaskBoard.Domain.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("TaskBoard.Domain.Entities.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TaskBoard.Domain.Entities.Task", b =>
@@ -221,8 +315,7 @@ namespace TaskBoard.Infrastructure.Migrations
                     b.HasOne("TaskBoard.Domain.Entities.Task", "Task")
                         .WithMany("TaskActivityLogs")
                         .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("TaskBoard.Domain.Entities.User", "User")
                         .WithMany("TaskActivityLogs")
@@ -256,6 +349,25 @@ namespace TaskBoard.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("TaskBoard.Domain.Entities.UserTask", b =>
+                {
+                    b.HasOne("TaskBoard.Domain.Entities.Task", "Task")
+                        .WithMany("UserTasks")
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TaskBoard.Domain.Entities.User", "User")
+                        .WithMany("UserTasks")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Task");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("TaskBoard.Domain.Entities.Board", b =>
                 {
                     b.Navigation("Columns");
@@ -273,13 +385,21 @@ namespace TaskBoard.Infrastructure.Migrations
             modelBuilder.Entity("TaskBoard.Domain.Entities.Task", b =>
                 {
                     b.Navigation("TaskActivityLogs");
+
+                    b.Navigation("UserTasks");
                 });
 
             modelBuilder.Entity("TaskBoard.Domain.Entities.User", b =>
                 {
+                    b.Navigation("OwnedBoards");
+
+                    b.Navigation("RefreshTokens");
+
                     b.Navigation("TaskActivityLogs");
 
                     b.Navigation("UserBoards");
+
+                    b.Navigation("UserTasks");
                 });
 #pragma warning restore 612, 618
         }

@@ -11,7 +11,7 @@ services:
     volumes:
       - taskboard-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready taskboard"]
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d taskboard" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -19,8 +19,13 @@ services:
 
   taskboard-api:
     build: ./backend
+    ports:
+      - "5000:5000"
     environment:
-      - ConnectionStrings__DefaultConnection=Host=taskboard-postgres;Port=5500;Username=${TASKBOARD_DB_USER};Password=${TASKBOARD_DB_PASSWORD};Database=taskboard;Pooling=true;MaxPoolSize=100;MinPoolSize=5;
+      - ConnectionStrings__DefaultConnection=Host=taskboard-postgres;Port=5432;Username=${TASKBOARD_DB_USER};Password=${TASKBOARD_DB_PASSWORD};Database=taskboard;Pooling=true;MaxPoolSize=100;MinPoolSize=5;
+      - Jwt__Secret=${Jwt__Secret};
+      - Jwt__Issuer=${Jwt__Issuer};
+      - Jwt__Audience=${Jwt__Audience};
     depends_on:
       taskboard-postgres:
         condition: service_healthy

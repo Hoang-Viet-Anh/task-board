@@ -1,0 +1,17 @@
+<app-dropdown-menu [open]="open()" (onClose)="toggleDropdown(false)" class="w-full">
+    <app-button dropdownTrigger variant="secondary" class="w-full"
+        [buttonClass]="'flex flex-row items-center justify-between w-full'" (clicked)="toggleDropdown(true, $event)">
+        <p>Move To</p>
+        <lucide-icon [img]="ChevronDown" [size]="20" [ngClass]="[
+            'transition-all duration-200',
+            open() ? 'rotate-180' : 'rotate-0'
+        ]"></lucide-icon>
+    </app-button>
+    <div dropdownContent class="flex flex-col w-3xs" (click)="toggleDropdown(false)">
+        @for (item of (columnList$ | async); track item.id) {
+        <app-button variant="ghost" [buttonClass]="'w-full !rounded-none'" (clicked)="onChangeColumn(item)">
+            {{item.title}}
+        </app-button>
+        }
+    </div>
+</app-dropdown-menu>

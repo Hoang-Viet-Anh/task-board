@@ -2,5 +2,7 @@ namespace TaskBoard.Domain.Enums;
 
 public enum TaskPriority
 {
-    LOW, MEDIUM, HIGH
+    LOW = 0,
+    MEDIUM = 1,
+    HIGH = 2
 }

@@ -1,0 +1,48 @@
+<div class="flex flex-col w-screen h-screen items-center justify-center">
+    <app-card [cardClass]="'flex flex-col gap-6 items-center justify-start p-4 w-96'">
+        <h1 class="font-semibold text-lg">Sign in</h1>
+        <form [formGroup]="loginForm" class="flex flex-col gap-6 w-full">
+            <div class="flex flex-col gap-1">
+                <app-input id="username" placeholder="username" type="text" [value]="loginForm.get('username')?.value"
+                    [disabled]="(isLoading$ | async) ?? false" (onValueChange)="onUsernameChange($event)"></app-input>
+                @if (loginForm.get('username')?.touched && getErrorField('username', 'required')) {
+                <small class="text-destructive">
+                    username is required
+                </small>
+                }
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <app-input id="password" placeholder="********" [type]="isPasswordVisible() ? 'text' : 'password'"
+                    [disabled]="(isLoading$ | async) ?? false" [value]="loginForm.get('password')?.value"
+                    (onValueChange)="onPasswordChange($event)">
+                    <div endIcon (click)="togglePasswordVisibility()">
+                        <lucide-icon [img]="isPasswordVisible() ? Eye : EyeOff" [size]="20"
+                            class="stroke-primary cursor-auto"></lucide-icon>
+                    </div>
+                </app-input>
+                @if (loginForm.get('password')?.touched && getErrorField('password', 'required')) {
+                <small class="text-destructive">
+                    password is required
+                </small>
+                }
+            </div>
+
+            <app-button [buttonClass]="'flex items-center justify-center w-full'" (clicked)="onSubmit()"
+                [disabled]="(isLoading$ | async) ?? false">
+                @if (isLoading$ | async) {
+                <lucide-icon [img]="LoaderCircle" [size]="24" class="animate-spin"></lucide-icon>
+                }
+                @else {
+                Sign in
+                }
+            </app-button>
+        </form>
+        <div class="flex flex-row gap-2">
+            <span>Don't have an account?</span>
+            <app-button variant="link" [buttonClass]="'!p-0'" routerLink="/signup">
+                Sign up
+            </app-button>
+        </div>
+    </app-card>
+</div>

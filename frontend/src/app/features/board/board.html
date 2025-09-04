@@ -1,0 +1,6 @@
+<div class="flex flex-wrap w-full max-w-7xl gap-10">
+    @for (board of (boards$ | async); track board.id) {
+    <app-board-card [board]="board"></app-board-card>
+    }
+    <app-add-board-button></app-add-board-button>
+</div>

@@ -1,0 +1,7 @@
+<div class="flex flex-row gap-2 items-center">
+    <lucide-icon [img]="Calendar" class="stroke-primary"></lucide-icon>
+    <p class="text-primary">Due Date</p>
+</div>
+<p-datepicker [minDate]="minDate" [(ngModel)]="value" dateFormat="dd/mm/yy" (onSelect)="onDateSelect($event)" class="w-40 bg-white"
+    placeholder="Select Date" inputStyleClass="!w-40 !border-primary"
+    panelStyleClass="!bg-white !text-black !border-secondary"></p-datepicker>

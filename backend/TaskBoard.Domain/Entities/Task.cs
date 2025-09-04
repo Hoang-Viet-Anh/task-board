@@ -11,5 +11,6 @@ public class Task : BaseAuditableEntity
     public required TaskPriority Priority { get; set; }
     public required Guid ColumnId { get; set; }
     public required Column Column { get; set; }
+    public List<UserTask> UserTasks { get; set; } = [];
     public List<TaskActivityLog> TaskActivityLogs { get; set; } = [];
 }

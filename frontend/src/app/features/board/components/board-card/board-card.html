@@ -1,0 +1,17 @@
+<div class="relative">
+    <app-button variant="ghost" [buttonClass]="'flex items-center justify-center !w-56 h-32 !p-4 border border-primary/40 rounded-xl'"
+        (clicked)="navigateToBoard(board.id)">
+        <p class="select-none line-clamp-2 break-all w-full">{{board.title}}</p>
+    </app-button>
+
+    <app-dropdown-menu class="absolute right-0.5 top-0.5 z-10" [open]="openDropdown()"
+        (onClose)="toggleDropdown(false)">
+        <app-button dropdownTrigger variant="ghost" [buttonClass]="'!p-2 !rounded-full'" (clicked)="toggleDropdown()">
+            <lucide-icon [img]="EllipsisVertical" [size]="20"></lucide-icon>
+        </app-button>
+        <div dropdownContent class="flex flex-col" (click)="toggleDropdown(false)">
+            <app-edit-board [board]="board"></app-edit-board>
+            <app-remove-board [board]="board"></app-remove-board>
+        </div>
+    </app-dropdown-menu>
+</div>

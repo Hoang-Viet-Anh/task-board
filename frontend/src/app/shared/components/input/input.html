@@ -1,0 +1,10 @@
+<div (click)="focusInput()" class="rounded-xl">
+    <app-card
+        [cardClass]="'py-2.5 px-2.5 flex-row gap-1 w-full focus-within:border-primary transition-colors cursor-text'">
+        <ng-content select="[startIcon]"></ng-content>
+        <input #inputElement [name]="name" [id]="id" [placeholder]="placeholder" [type]="type" [value]="value"
+            [disabled]="disabled" (input)="onChange($event)"
+            class="focus-visible:outline-none text-sm flex-1 placeholder:text-primary" />
+        <ng-content select="[endIcon]"></ng-content>
+    </app-card>
+</div>

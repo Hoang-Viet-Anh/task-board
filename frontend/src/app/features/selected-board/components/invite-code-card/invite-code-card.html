@@ -1,0 +1,9 @@
+<ng-container *ngIf="inviteCode$ | async as code">
+    <app-card [cardClass]="'flex-col gap-2 !p-2'">
+        <h3>Invite Code</h3>
+        <app-button variant="outline" buttonClass="!p-2 !rounded-xl !items-center !justify-between gap-10" (clicked)="onCopy(code)">
+            <p>{{code}}</p>
+            <lucide-icon endIcon [img]="Copy" [size]="20"></lucide-icon>
+        </app-button>
+    </app-card>
+</ng-container>

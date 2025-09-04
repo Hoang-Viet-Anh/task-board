@@ -1,0 +1,23 @@
+<app-dialog-layout>
+    <div class="flex flex-col items-center gap-4 w-96">
+        <div class="flex flex-col gap-6">
+            <h2 class="font-semibold text-lg">{{title}}</h2>
+            <p>{{description}}</p>
+            <div class="flex flex-row gap-2 w-full justify-end">
+                <app-button variant="secondary" [buttonClass]="'justify-center w-28'" (clicked)="onClose()"
+                    [disabled]="isLoading">
+                    Cancel
+                </app-button>
+                <app-button variant="destruction" [buttonClass]="'justify-center w-28'" (clicked)="onDelete()"
+                    [disabled]="isLoading">
+                    @if (isLoading) {
+                    <lucide-icon [img]="LoaderCircle" [size]="20" class="animate-spin"></lucide-icon>
+                    }
+                    @else {
+                    Remove
+                    }
+                </app-button>
+            </div>
+        </div>
+    </div>
+</app-dialog-layout>

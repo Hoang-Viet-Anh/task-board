@@ -1,1 +1,15 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+@theme {
+    --color-primary: oklch(55.4% 0.046 257.417);
+    --color-secondary: oklch(86.9% 0.022 252.894);
+    --color-destructive: oklch(50.5% 0.213 27.518);
+    --color-font-primary: oklch(37.2% 0.044 257.287);
+
+    --container-8xl: 90rem;
+}
+
+html, body {
+  background-color: white !important;
+  color: inherit !important;
+}

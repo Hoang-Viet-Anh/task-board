@@ -1,0 +1,18 @@
+<app-dropdown-menu [open]="isDropdownOpen()" (onClose)="toggleDropdown(false)">
+    <app-button dropdownTrigger variant="ghost" [buttonClass]="'!p-2 !rounded-full'"
+        (clicked)="toggleDropdown(true, $event)">
+        <lucide-icon [img]="EllipsisVertical" [size]="20"></lucide-icon>
+    </app-button>
+    <div dropdownContent class="flex flex-col" (click)="toggleDropdown(false)">
+        <app-button variant="ghost" [buttonClass]="'flex-row items-center gap-2 w-full !rounded-none'"
+            (clicked)="openEditDialog()">
+            <lucide-icon [img]="Pencil" [size]="20"></lucide-icon>
+            <p>Edit</p>
+        </app-button>
+        <app-button variant="ghost" [buttonClass]="'flex-row items-center gap-2 w-full !rounded-none'"
+            (clicked)="openRemoveDialog()">
+            <lucide-icon [img]="Trash" [size]="20" class="stroke-destructive"></lucide-icon>
+            <p class="text-destructive">Remove</p>
+        </app-button>
+    </div>
+</app-dropdown-menu>

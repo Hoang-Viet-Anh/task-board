@@ -1,0 +1,16 @@
+<div class="flex flex-row w-full max-w-7xl justify-between items-center">
+    <h1 class="font-semibold text-2xl">{{boardTitle$ | async}}</h1>
+    <div class="flex flex-row gap-4">
+        <app-invite-code-card></app-invite-code-card>
+        <app-history-actions [boardId]="boardId"></app-history-actions>
+    </div>
+</div>
+
+<div class="flex flex-row gap-4 min-w-7xl max-w-8xl overflow-x-auto h-[calc(100vh-250px)]" cdkDropListGroup>
+    @for (item of (boardColumns$ | async); track item.id) {
+    <app-task-list [column]="item"></app-task-list>
+    }
+    @if (!(isLoading$ | async)) {
+    <app-add-list-card [boardId]="boardId"></app-add-list-card>
+    }
+</div>

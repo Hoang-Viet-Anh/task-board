@@ -1,0 +1,18 @@
+<div (click)="openTaskDialog()" class="w-full">
+    <app-card [cardClass]="'flex flex-col p-4 gap-4'">
+        <div class="flex flex-row items-center justify-between w-full">
+            <h2 class="font-medium text-lg">{{task.title}}</h2>
+            <app-task-menu [column]="column" [task]="task"></app-task-menu>
+        </div>
+        <p class="break-words text-primary">{{task.description}}</p>
+        <div class="flex flex-row gap-2 items-center">
+            <lucide-icon [img]="Calendar"></lucide-icon>
+            <p class="text-primary font-semibold">{{task.dueDate | date}}</p>
+        </div>
+        <app-badge [badgeClass]="'flex-row items-center pl-1.5 pr-2.5'">
+            <lucide-icon [img]="Dot" [size]="24" class="dot-icon"></lucide-icon>
+            <p class="mb-0.5">{{getPriorityTitle()}}</p>
+        </app-badge>
+        <app-change-list-dropdown class="w-full" [column]="column" [task]="task"></app-change-list-dropdown>
+    </app-card>
+</div>

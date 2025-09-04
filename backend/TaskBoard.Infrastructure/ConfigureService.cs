@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TaskBoard.Application.Common.Interfaces;
+using TaskBoard.Domain.Entities;
 using TaskBoard.Infrastructure.Persistence;
 using TaskBoard.Infrastructure.Services;
 
@@ -21,7 +23,9 @@ public static class ConfigureServices
 
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
         services.AddScoped<IJwtProviderService, JwtProviderService>();
-
+        services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+        services.AddScoped<IInviteCodeGenerator, InviteCodeGenerator>();
+        
         return services;
     }
 }

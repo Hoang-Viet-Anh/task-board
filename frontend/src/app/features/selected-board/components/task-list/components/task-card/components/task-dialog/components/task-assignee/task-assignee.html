@@ -1,0 +1,25 @@
+<app-dropdown-menu [open]="isDropdownOpen()" (onClose)="toggleDropdown(false)" dropdownClass="!w-40">
+    <app-button dropdownTrigger variant="outline" (clicked)="toggleDropdown(true)" class="w-full"
+        buttonClass="!w-full !justify-between items-center !px-3">
+        <p>Assign to</p>
+        <lucide-icon [img]="ChevronDown" [size]="20"></lucide-icon>
+    </app-button>
+    <div dropdownContent class="w-full" (click)="preventClose($event)">
+        @if (boardMembers$ | async) {
+        @for (item of (boardMembers$ | async); track item.id) {
+        <app-button variant="ghost" class="w-full" buttonClass="!px-2 py-3 !justify-between items-center !rounded-none"
+            (clicked)="onAssign(item.id!)">
+            <p class="w-full text-start truncate">{{item.username}}</p>
+            @if (isAssigned(item.id!) | async) {
+            <lucide-icon [img]="Check" [size]="20"></lucide-icon>
+            }
+        </app-button>
+        }
+        }
+        @else {
+        <div class="py-10 w-full flex items-center justify-center">
+            <p>No members.</p>
+        </div>
+        }
+    </div>
+</app-dropdown-menu>
