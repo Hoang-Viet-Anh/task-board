@@ -13,10 +13,12 @@ public record CreateLogCommand(TaskActivityLog Log) : IRequest<Unit>;
 public class CreateLogCommandHandler : IRequestHandler<CreateLogCommand, Unit>
 {
     public readonly IApplicationDbContext _context;
+    public readonly ISlackService _slackService;
 
-    public CreateLogCommandHandler(IApplicationDbContext context)
+    public CreateLogCommandHandler(IApplicationDbContext context, ISlackService slackService)
     {
         _context = context;
+        _slackService = slackService;
     }
 
     public async Task<Unit> Handle(CreateLogCommand request, CancellationToken cancellationToken)
@@ -24,7 +26,7 @@ public class CreateLogCommandHandler : IRequestHandler<CreateLogCommand, Unit>
         _context.TaskActivityLogs.Add(request.Log);
 
         await _context.SaveChangesAsync(cancellationToken);
-
+        await _slackService.SendMessage(request.Log.Log);
         return Unit.Value;
     }
 }
