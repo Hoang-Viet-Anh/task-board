@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { ColumnMenuService } from "../services/column-menu.service";
 import { catchError, mergeMap, of } from "rxjs";
-import { removeColumnFailure, removeColumnRequest, removeColumnSuccess, updateColumnFailure, updateColumnRequest, updateColumnSuccess } from "./column-menu.actions";
+import { removeColumnFailure, removeColumnRequest, removeColumnSuccess, moveColumnRequest, updateColumnRequest, updateColumnSuccess, updateColumnFailure } from "./column-menu.actions";
 import { MessageService } from "primeng/api";
 import { getColumnsByBoardId } from "@app/features/selected-board/store/selected-board.actions";
 import { HttpErrorResponse } from "@angular/common/http";
@@ -19,7 +19,7 @@ export class ColumnMenuEffects {
         this.actions$.pipe(
             ofType(updateColumnRequest),
             mergeMap((action) =>
-                this.columnMenuService.updateColumnTitle(action).pipe(
+                this.columnMenuService.updateColumn(action).pipe(
                     mergeMap(() => {
                         this.messageService.add({
                             summary: "List updated",
@@ -58,6 +58,26 @@ export class ColumnMenuEffects {
                             severity: "error"
                         });
                         return of(removeColumnFailure({ error: 'something went wrong' }))
+                    }),
+                )
+            )
+        )
+    )
+
+    moveColumn$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(moveColumnRequest),
+            mergeMap((action) =>
+                this.columnMenuService.updateColumn(action.changedColumn).pipe(
+                    mergeMap(() => {
+                        return of(getColumnsByBoardId({ id: action.changedColumn.boardId! }))
+                    }),
+                    catchError((error: HttpErrorResponse) => {
+                        this.messageService.add({
+                            summary: "Failed to move list",
+                            severity: "error"
+                        });
+                        return of(getColumnsByBoardId({ id: action.changedColumn.boardId! }))
                     }),
                 )
             )

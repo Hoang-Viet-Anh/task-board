@@ -1,8 +1,8 @@
 <app-dialog-layout [cardClass]="'!p-0 !border-none'" [closeButtonClass]="'stroke-white'">
     <div class="flex flex-col w-7xl h-[80vh]">
         <div class="w-full h-16 bg-primary rounded-t-lg"></div>
-        <div class="flex flex-row w-full h-[calc(100%-64px)]">
-            <div class="flex flex-col w-full gap-10 p-10 basis-3/5">
+        <div class="flex flex-row w-full h-[calc(100%-64px)]" *ngIf="task$ | async as task">
+            <div class="flex flex-col w-full gap-10 p-10 basis-3/5" *ngIf="column$ | async as column">
                 <h2 class="font-bold text-3xl w-60 line-clamp-1">{{task.title}}</h2>
 
                 <div class="grid grid-cols-2 grid-rows-3 items-center gap-6 w-1/2">
@@ -22,7 +22,7 @@
                         <lucide-icon [img]="Tag" class="stroke-primary"></lucide-icon>
                         <p class="text-primary">Priority</p>
                     </div>
-                    <p>{{getPriority()}}</p>
+                    <p>{{getPriority(task)}}</p>
 
                     <div class="flex flex-row gap-2 items-center">
                         <lucide-icon [img]="UsersRound" class="stroke-primary"></lucide-icon>

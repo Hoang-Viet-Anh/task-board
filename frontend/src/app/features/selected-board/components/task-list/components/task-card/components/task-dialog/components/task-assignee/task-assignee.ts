@@ -47,9 +47,9 @@ export class TaskAssignee {
   onAssign(user: UserEntity) {
     let updatedAssignedList = [...this.task.assignedUsers ?? []]
     if (this.isAssigned(user))
-      updatedAssignedList.push(user)
-    else
       updatedAssignedList = updatedAssignedList.filter(au => au.id !== user.id)
+    else
+      updatedAssignedList = [...updatedAssignedList, user]
 
     const updatedTask: TaskEntity = {
       ...this.task,

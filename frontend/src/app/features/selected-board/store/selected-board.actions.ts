@@ -18,9 +18,5 @@ export const getLogsByBoardIdFailure = createAction("Get history by board id fai
 
 export const clearBoard = createAction("Clear board and column")
 
-export const changeTaskList = createAction("Change task list", props<{ task: TaskEntity, previousColumn: ColumnEntity, currentColumn: ColumnEntity }>())
-export const changeTaskListSuccess = createAction("Change task list success")
-export const changeTaskListFailure = createAction("Change task list failure", props<{ error: string }>())
-
 export const loadMoreLogs = createAction("Load more logs", props<{ id: string }>())
 export const loadMoreLogsSuccess = createAction("Load more logs success", props<{ logs: Log[] }>())

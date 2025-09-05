@@ -27,9 +27,7 @@ export class TaskCard {
   @Input() column!: ColumnEntity
   @Input() isDragged: boolean = false
 
-  constructor(private dialogService: DialogService) {
-
-  }
+  constructor(private dialogService: DialogService) { }
 
   getPriorityTitle() {
     return priorityOptions.find(po => po.value === this.task.priority)?.title
@@ -38,8 +36,8 @@ export class TaskCard {
   openTaskDialog() {
     if (!this.isDragged)
       this.dialogService.open(TaskDialog, {
-        task: this.task,
-        column: this.column
+        taskId: this.task.id,
+        columnId: this.column.id
       })
   }
 }

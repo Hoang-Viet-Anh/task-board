@@ -3,9 +3,9 @@ import { TaskService } from "../services/task.service";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { MessageService } from "primeng/api";
 import { catchError, mergeMap, of } from "rxjs";
-import { assignTaskFailure, assignTaskRequest, assignTaskSuccess, createTaskFailure, createTaskRequest, createTaskSuccess, deleteTaskFailure, deleteTaskRequest, deleteTaskSuccess, updateTaskFailure, updateTaskRequest, updateTaskSuccess } from "./task.actions";
+import { assignTaskFailure, assignTaskRequest, assignTaskSuccess, changeTaskList, changeTaskListFailure, changeTaskListSuccess, createTaskFailure, createTaskRequest, createTaskSuccess, deleteTaskFailure, deleteTaskRequest, deleteTaskSuccess, updateTaskFailure, updateTaskRequest, updateTaskSuccess } from "./task.actions";
 import { HttpErrorResponse } from "@angular/common/http";
-import { changeTaskList, changeTaskListFailure, changeTaskListSuccess, getColumnsByBoardId } from "@app/features/selected-board/store/selected-board.actions";
+import { getColumnsByBoardId } from "@app/features/selected-board/store/selected-board.actions";
 import { DialogService } from "@app/shared/services/dialog.service";
 
 @Injectable()
@@ -90,46 +90,46 @@ export class TaskEffects {
         )
     )
 
-    // moveTask$ = createEffect(() =>
-    //     this.actions$.pipe(
-    //         ofType(changeTaskList),
-    //         mergeMap((action) =>
-    //             this.taskService.moveTask({
-    //                 id: action.task.id,
-    //                 columnId: action.currentColumn.id
-    //             }).pipe(
-    //                 mergeMap(() => {
-    //                     return of(changeTaskListSuccess(), getColumnsByBoardId({ id: action.currentColumn.boardId! }))
-    //                 }),
-    //                 catchError((error: HttpErrorResponse) => {
-    //                     this.messageService.add({
-    //                         summary: "Failed to update task",
-    //                         severity: "error"
-    //                     });
-    //                     return of(changeTaskListFailure({ error: 'something went wrong' }), getColumnsByBoardId({ id: action.currentColumn.boardId! }))
-    //                 }),
-    //             )
-    //         )
-    //     )
-    // )
+    moveTask$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(changeTaskList),
+            mergeMap((action) =>
+                this.taskService.moveTask({
+                    id: action.task.id,
+                    columnId: action.currentColumn.id
+                }).pipe(
+                    mergeMap(() => {
+                        return of(changeTaskListSuccess(), getColumnsByBoardId({ id: action.currentColumn.boardId! }))
+                    }),
+                    catchError((error: HttpErrorResponse) => {
+                        this.messageService.add({
+                            summary: "Failed to update task",
+                            severity: "error"
+                        });
+                        return of(changeTaskListFailure({ error: 'something went wrong' }), getColumnsByBoardId({ id: action.currentColumn.boardId! }))
+                    }),
+                )
+            )
+        )
+    )
 
-    // assignTask$ = createEffect(() =>
-    //     this.actions$.pipe(
-    //         ofType(assignTaskRequest),
-    //         mergeMap((action) =>
-    //             this.taskService.assignTask(action.task, action.userId).pipe(
-    //                 mergeMap(() => {
-    //                     return of(assignTaskSuccess(), getColumnsByBoardId({ id: action.boardId }))
-    //                 }),
-    //                 catchError((error: HttpErrorResponse) => {
-    //                     this.messageService.add({
-    //                         summary: "Failed to update task",
-    //                         severity: "error"
-    //                     });
-    //                     return of(assignTaskFailure({ error: 'something went wrong' }), getColumnsByBoardId({ id: action.boardId }))
-    //                 }),
-    //             )
-    //         )
-    //     )
-    // )
+    assignTask$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(assignTaskRequest),
+            mergeMap((action) =>
+                this.taskService.assignTask(action.task, action.userId).pipe(
+                    mergeMap(() => {
+                        return of(assignTaskSuccess(), getColumnsByBoardId({ id: action.boardId }))
+                    }),
+                    catchError((error: HttpErrorResponse) => {
+                        this.messageService.add({
+                            summary: "Failed to update task",
+                            severity: "error"
+                        });
+                        return of(assignTaskFailure({ error: 'something went wrong' }), getColumnsByBoardId({ id: action.boardId }))
+                    }),
+                )
+            )
+        )
+    )
 }

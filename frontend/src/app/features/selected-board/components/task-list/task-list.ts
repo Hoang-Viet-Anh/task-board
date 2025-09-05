@@ -7,15 +7,15 @@ import { TaskCard } from "./components/task-card/task-card";
 import { ColumnEntity } from '../../models/column.model';
 import { CdkDragDrop, DragDropModule, transferArrayItem } from '@angular/cdk/drag-drop';
 import { TaskEntity } from '../../models/task.model';
-import { changeTaskList } from '../../store/selected-board.actions';
 import { Store } from '@ngrx/store';
 import { CommonModule } from '@angular/common';
+import { changeTaskList } from './store/task.actions';
 
 @Component({
   selector: 'app-task-list',
   imports: [Separator, LucideAngularModule, ColumnMenu, AddTaskButton, TaskCard, DragDropModule, CommonModule],
   templateUrl: './task-list.html',
-  styleUrl: './task-list.css'
+  styleUrl: './task-list.css',
 })
 export class TaskList implements OnInit {
   readonly EllipsisVertical = EllipsisVertical
