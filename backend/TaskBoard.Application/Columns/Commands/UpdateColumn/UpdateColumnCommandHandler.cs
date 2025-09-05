@@ -30,6 +30,7 @@ public class UpdateColumnCommandHandler : IRequestHandler<UpdateColumnCommand, U
         if (!column.Board.UserBoards.Any(ub => ub.UserId == user.Id)) throw new ForbiddenException();
 
         column.Title = request.ColumnDto.Title ?? column.Title;
+        column.Order = request.ColumnDto.Order ?? column.Order;
 
         await _context.SaveChangesAsync(cancellationToken);
 

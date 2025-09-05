@@ -2,9 +2,10 @@ import { BoardEntity } from "@app/features/board/models/board.model";
 import { ColumnEntity } from "../models/column.model";
 import { RequestStatus } from "@app/shared/models/request.status";
 import { createReducer, on } from "@ngrx/store";
-import { getColumnsByBoardId, getColumnsByBoardIdSuccess, getBoardById, getBoardByIdSuccess, getBoardByIdFailure, getColumnsByBoardIdFailure, clearBoard, changeTaskList, getLogsByBoardIdSuccess, loadMoreLogs, loadMoreLogsSuccess } from "./selected-board.actions";
+import { getColumnsByBoardId, getColumnsByBoardIdSuccess, getBoardById, getBoardByIdSuccess, getBoardByIdFailure, getColumnsByBoardIdFailure, clearBoard, getLogsByBoardIdSuccess, loadMoreLogs, loadMoreLogsSuccess } from "./selected-board.actions";
 import { Log } from "../models/log.model";
-import { assignTaskRequest } from "../components/task-list/store/task.actions";
+import { assignTaskRequest, changeTaskList } from "../components/task-list/store/task.actions";
+import { moveColumnRequest } from "../components/task-list/components/column-menu/store/column-menu.actions";
 
 export interface SelectedBoardState {
     boardStatus: RequestStatus,
@@ -79,45 +80,21 @@ export const selectedBoardReducer = createReducer(
         }
     })),
 
-    on(changeTaskList, (state, action) => {
-        return ({
-            ...state,
-            columns: state.columns.map(c => {
-                const oldTasks = c.tasks ?? []
+    on(changeTaskList, (state, action) => ({
+        ...state,
+        columns: state.columns.map(c =>
+            c.id === action.currentColumn.id ? { ...action.currentColumn } :
+                c.id === action.previousColumn.id ? { ...action.previousColumn } :
+                    c)
+    })),
 
-                const filteredTasks = c.id === action.task.columnId
-                    ? oldTasks.filter(t => t.id !== action.task.id)
-                    : oldTasks;
-
-                const updatedTasks = c.id === action.newColumn.id
-                    ? [...filteredTasks, { ...action.task, columnId: action.newColumn.id }].sort(
-                        (a, b) => a.dueDate!.getTime() - b.dueDate!.getTime()
-                    )
-                    : filteredTasks;
-
-
-                return ({
-                    ...c,
-                    tasks: updatedTasks
-                })
-            })
-        })
-    }),
-
-    on(assignTaskRequest, (state, action) => {
-        return ({
-            ...state,
-            columns: state.columns.map(c => ({
-                ...c,
-                tasks: c.tasks?.map(t =>
-                    t.id === action.task.id
-                        ? { ...t, assignedUsers: [...(t.assignedUsers ?? []), { id: action.userId }] }
-                        : t
-                )
-            }))
-
-        })
-    }),
+    on(assignTaskRequest, (state, action) => ({
+        ...state,
+        columns: state.columns.map(c => c.id === action.task.columnId ? {
+            ...c,
+            tasks: c.tasks?.map(t => t.id === action.task.id ? { ...action.task } : t)
+        } : c)
+    })),
 
     on(getLogsByBoardIdSuccess, (state, action) => ({
         ...state,
@@ -128,9 +105,15 @@ export const selectedBoardReducer = createReducer(
         ...state,
         logPage: state.logPage + 1
     })),
+
     on(loadMoreLogsSuccess, (state, action) => ({
         ...state,
         logs: [...state.logs, ...action.logs]
+    })),
+
+    on(moveColumnRequest, (state, action) => ({
+        ...state,
+        columns: action.columns
     })),
 
     on(clearBoard, state => initialSelectedBoardState)

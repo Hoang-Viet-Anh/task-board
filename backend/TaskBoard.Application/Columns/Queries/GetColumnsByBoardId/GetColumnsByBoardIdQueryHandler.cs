@@ -36,7 +36,7 @@ public class GetColumnsByBoardIdHandler : IRequestHandler<GetColumnsByBoardId, L
 
         if (!board.UserBoards.Any(ub => ub.UserId == user.Id)) throw new ForbiddenException();
 
-        var columns = board.Columns.OrderBy(c => c.CreatedAt).ToList();
+        var columns = board.Columns.OrderBy(c => c.Order).ToList();
 
         columns.ForEach(cd => cd.Tasks.ForEach(t => t.TaskActivityLogs = t.TaskActivityLogs.OrderByDescending(l => l.CreatedAt).ToList()));
 

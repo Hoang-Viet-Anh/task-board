@@ -1,3 +1,4 @@
+import { ColumnEntity } from "@app/features/selected-board/models/column.model";
 import { TaskEntity } from "@app/features/selected-board/models/task.model";
 import { createAction, props } from "@ngrx/store";
 
@@ -16,3 +17,7 @@ export const deleteTaskFailure = createAction('Delete task failure', props<{ err
 export const assignTaskRequest = createAction('Assign task request', props<{ task: TaskEntity, boardId: string, userId: string }>())
 export const assignTaskSuccess = createAction('Assign task success')
 export const assignTaskFailure = createAction('Assign task failure', props<{ error: string }>())
+
+export const changeTaskList = createAction("Change task list", props<{ task: TaskEntity, previousColumn: ColumnEntity, currentColumn: ColumnEntity }>())
+export const changeTaskListSuccess = createAction("Change task list success")
+export const changeTaskListFailure = createAction("Change task list failure", props<{ error: string }>())

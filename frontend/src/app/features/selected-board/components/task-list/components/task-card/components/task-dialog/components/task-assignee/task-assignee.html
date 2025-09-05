@@ -8,9 +8,9 @@
         @if (boardMembers$ | async) {
         @for (item of (boardMembers$ | async); track item.id) {
         <app-button variant="ghost" class="w-full" buttonClass="!px-2 py-3 !justify-between items-center !rounded-none"
-            (clicked)="onAssign(item.id!)">
+            (clicked)="onAssign(item)">
             <p class="w-full text-start truncate">{{item.username}}</p>
-            @if (isAssigned(item.id!) | async) {
+            @if (isAssigned(item)) {
             <lucide-icon [img]="Check" [size]="20"></lucide-icon>
             }
         </app-button>

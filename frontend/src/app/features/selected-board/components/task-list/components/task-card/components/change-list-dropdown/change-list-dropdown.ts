@@ -8,7 +8,7 @@ import { ColumnEntity } from '@app/features/selected-board/models/column.model';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { selectSelectedBoardColumns } from '@app/features/selected-board/store/selected-board.selectors';
-import { changeTaskList } from '@app/features/selected-board/store/selected-board.actions';
+import { changeTaskList } from '../../../../store/task.actions';
 
 @Component({
   selector: 'app-change-list-dropdown',
@@ -41,6 +41,6 @@ export class ChangeListDropdown {
     if (selectedColumn.id == this.column.id)
       return;
 
-    this.store.dispatch(changeTaskList({ task: this.task, newColumn: { id: selectedColumn.id, boardId: this.column.boardId! } }))
+    this.store.dispatch(changeTaskList({ task: this.task, currentColumn: selectedColumn, previousColumn: this.column }))
   }
 }

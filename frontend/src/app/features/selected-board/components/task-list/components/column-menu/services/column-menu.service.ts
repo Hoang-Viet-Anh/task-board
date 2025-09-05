@@ -9,7 +9,7 @@ import { Observable } from "rxjs";
 export class ColumnMenuService {
     private apiService = inject(ApiService)
 
-    updateColumnTitle(column: ColumnEntity): Observable<any> {
+    updateColumn(column: ColumnEntity): Observable<any> {
         return this.apiService.post<any>('column/update', column)
     }
 

@@ -24,15 +24,12 @@ export class TaskAssignee {
   @Input() task!: TaskEntity
   @Input() column!: ColumnEntity
 
-  assigneeList$: Observable<UserEntity[] | undefined>
-
   boardMembers$: Observable<UserEntity[] | undefined>
 
   isDropdownOpen = signal<boolean>(false)
 
   constructor(private store: Store) {
     this.boardMembers$ = this.store.select(selectBoardMembers)
-    this.assigneeList$ = this.store.select(selectSelectedBoardColumns).pipe(map(col => col.find(c => c.id === this.column.id)?.tasks?.find(t => t.id === this.task.id)?.assignedUsers))
   }
 
   toggleDropdown(state?: boolean) {
@@ -43,11 +40,22 @@ export class TaskAssignee {
     event.stopPropagation()
   }
 
-  isAssigned(userId: string): Observable<boolean> {
-    return this.assigneeList$.pipe(map(t => !!t?.find(u => u.id === userId)))
+  isAssigned(user: UserEntity): boolean {
+    return !!this.task.assignedUsers?.find(au => au.id === user.id)
   }
 
-  onAssign(userId: string) {
-    this.store.dispatch(assignTaskRequest({ task: this.task, userId: userId, boardId: this.column.boardId! }))
+  onAssign(user: UserEntity) {
+    let updatedAssignedList = [...this.task.assignedUsers ?? []]
+    if (this.isAssigned(user))
+      updatedAssignedList = updatedAssignedList.filter(au => au.id !== user.id)
+    else
+      updatedAssignedList = [...updatedAssignedList, user]
+
+    const updatedTask: TaskEntity = {
+      ...this.task,
+      assignedUsers: updatedAssignedList
+    }
+
+    this.store.dispatch(assignTaskRequest({ task: updatedTask, userId: user.id!, boardId: this.column.boardId! }))
   }
 }

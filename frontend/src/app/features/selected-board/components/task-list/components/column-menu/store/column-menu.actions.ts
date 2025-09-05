@@ -8,3 +8,5 @@ export const updateColumnFailure = createAction("Update column failure", props<{
 export const removeColumnRequest = createAction("Remove column", props<ColumnEntity>())
 export const removeColumnSuccess = createAction("Remove column success")
 export const removeColumnFailure = createAction("Remove column failure", props<{ error: string }>())
+
+export const moveColumnRequest = createAction("Move column", props<{ columns: ColumnEntity[], changedColumn: ColumnEntity }>())

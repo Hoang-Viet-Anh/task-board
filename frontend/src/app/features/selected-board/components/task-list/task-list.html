@@ -1,12 +1,17 @@
-<div class="flex flex-col gap-2 w-2xs h-[calc(100vh-250px)]" cdkDropList [cdkDropListData]="column"
-    (cdkDropListDropped)="onDropped($event)">
-    <app-separator></app-separator>
-    <app-column-menu [column]="column"></app-column-menu>
-    <app-separator></app-separator>
-    <app-add-task-button [column]="column"></app-add-task-button>
-    <div class="flex flex-col max-h-full pb-2 gap-2 overflow-y-auto">
+<div class="flex flex-col h-full gap-2">
+    <div class="flex flex-col gap-2">
+        <app-separator></app-separator>
+        <app-column-menu [column]="column"></app-column-menu>
+        <app-separator></app-separator>
+        <app-add-task-button [column]="column"></app-add-task-button>
+    </div>
+    <div class="grow shrink basis-0 flex flex-col pb-2 gap-2 overflow-y-auto overflow-x-hidden" cdkDropList [cdkDropListData]="column"
+        [cdkDropListAutoScrollDisabled]="true" (cdkDropListDropped)="onDropped($event)"
+        cdkDropListOrientation="vertical">
         @for (item of column.tasks; track item.id) {
-        <app-task-card [task]="item" [column]="column" cdkDrag [cdkDragData]="item"></app-task-card>
+        <div class="w-full" cdkDrag (cdkDragStarted)="onDragStart()" [cdkDragData]="item">
+            <app-task-card [task]="item" [column]="column" [isDragged]="isDragged()"></app-task-card>
+        </div>
         }
     </div>
 </div>

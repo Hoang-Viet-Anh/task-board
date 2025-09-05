@@ -10,8 +10,9 @@ import { CommonModule } from '@angular/common';
 import { ColumnEntity } from './models/column.model';
 import { InviteCodeCard } from "./components/invite-code-card/invite-code-card";
 import { AddListCard } from "./components/add-list-card/add-list-card";
-import { DragDropModule } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { HistoryActions } from "./components/history-actions/history-actions";
+import { moveColumnRequest } from './components/task-list/components/column-menu/store/column-menu.actions';
 
 @Component({
   selector: 'app-selected-board',
@@ -19,7 +20,7 @@ import { HistoryActions } from "./components/history-actions/history-actions";
   templateUrl: './selected-board.html',
   styleUrl: './selected-board.css',
   host: {
-    class: 'flex flex-col items-center gap-10'
+    class: 'flex h-full'
   }
 })
 export class SelectedBoard implements OnInit {
@@ -51,4 +52,32 @@ export class SelectedBoard implements OnInit {
       this.store.dispatch(getBoardById({ id: this.boardId }))
   }
 
+  onColumnDrop(event: CdkDragDrop<any>) {
+    const columns: ColumnEntity[] = event.container.data
+    const previousIndex = event.previousIndex
+    const currentIndex = event.currentIndex
+
+    if (previousIndex === currentIndex)
+      return
+
+    let currentList = [...columns ?? []]
+
+    moveItemInArray(currentList, previousIndex, currentIndex)
+
+    const leftItem = currentList[currentIndex - 1]
+    const currentItem = currentList[currentIndex]
+    const rightItem = currentList[currentIndex + 1]
+
+    let newOrderValue = leftItem?.order && rightItem?.order ? (leftItem.order + rightItem.order) / 2 :
+      leftItem?.order ? leftItem.order + 1000 :
+        rightItem?.order ? rightItem.order - 1000 : 0
+
+    const changedColumn: ColumnEntity = {
+      ...currentItem,
+      order: newOrderValue,
+      title: undefined
+    }
+
+    this.store.dispatch(moveColumnRequest({ columns: currentList, changedColumn }))
+  }
 }
