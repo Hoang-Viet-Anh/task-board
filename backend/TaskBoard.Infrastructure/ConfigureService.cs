@@ -25,7 +25,9 @@ public static class ConfigureServices
         services.AddScoped<IJwtProviderService, JwtProviderService>();
         services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
         services.AddScoped<IInviteCodeGenerator, InviteCodeGenerator>();
-        
+        services.AddScoped<ISlackService, SlackService>();
+        services.AddHttpClient<SlackService>();
+
         return services;
     }
 }
