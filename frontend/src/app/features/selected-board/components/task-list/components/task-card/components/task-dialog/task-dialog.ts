@@ -12,7 +12,7 @@ import { priorityOptions } from '../../../add-task-button/components/add-task-di
 import { TaskLogs } from "./components/task-logs/task-logs";
 import { TaskAssignee } from "./components/task-assignee/task-assignee";
 import { Observable, of } from 'rxjs';
-import { selectColumnById, selectTaskById } from '@app/features/selected-board/store/selected-board.selectors';
+import { selectColumnByTaskId, selectTaskById } from '@app/features/selected-board/store/selected-board.selectors';
 
 @Component({
   selector: 'app-task-dialog',
@@ -27,7 +27,6 @@ export class TaskDialog implements OnInit {
   readonly UsersRound = UsersRound
 
   @Input() taskId: string = '';
-  @Input() columnId: string = '';
 
   task$: Observable<TaskEntity | undefined> = of()
   column$: Observable<ColumnEntity | undefined> = of()
@@ -39,7 +38,7 @@ export class TaskDialog implements OnInit {
 
   ngOnInit(): void {
     this.task$ = this.store.select(selectTaskById(this.taskId))
-    this.column$ = this.store.select(selectColumnById(this.columnId))
+    this.column$ = this.store.select(selectColumnByTaskId(this.taskId))
   }
 
   closeDialog() {

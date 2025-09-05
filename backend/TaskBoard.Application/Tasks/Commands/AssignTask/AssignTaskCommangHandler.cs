@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using TaskBoard.Application.ActivityLogs.Commands.CreateLog;
 using TaskBoard.Application.Common.Dtos;
 using TaskBoard.Application.Common.Exceptions;
@@ -13,19 +14,21 @@ public record AssignTaskCommand(Guid UserId, AssignDto AssignDto) : IRequest<Uni
 public class AssignTaskCommandHandler : IRequestHandler<AssignTaskCommand, Unit>
 {
     public readonly IApplicationDbContext _context;
+    public readonly IConfiguration _configuration;
     public readonly IMediator _mediator;
 
-    public AssignTaskCommandHandler(IApplicationDbContext context, IMediator mediator)
+    public AssignTaskCommandHandler(IApplicationDbContext context, IMediator mediator, IConfiguration configuration)
     {
         _context = context;
         _mediator = mediator;
+        _configuration = configuration;
     }
 
     public async Task<Unit> Handle(AssignTaskCommand request, CancellationToken cancellationToken)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken: cancellationToken) ?? throw new UnauthorizedAccessException();
 
-        var asignee = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.AssignDto.AsigneeId, cancellationToken: cancellationToken) ?? throw new NotFoundException("User not found");
+        var assignee = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.AssignDto.AsigneeId, cancellationToken: cancellationToken) ?? throw new NotFoundException("User not found");
 
         var task = await _context.Tasks
         .Include(t => t.Column)
@@ -34,15 +37,17 @@ public class AssignTaskCommandHandler : IRequestHandler<AssignTaskCommand, Unit>
         .Include(t => t.UserTasks)
         .FirstOrDefaultAsync(t => t.Id == request.AssignDto.TaskId, cancellationToken: cancellationToken) ?? throw new NotFoundException("Task not found");
 
-        if (!task.Column.Board.UserBoards.Any(ub => ub.UserId == asignee.Id)) throw new ForbiddenException();
+        if (!task.Column.Board.UserBoards.Any(ub => ub.UserId == assignee.Id)) throw new ForbiddenException();
 
         string log;
+        var frontendUrl = _configuration["Frontend:Url"] ?? "";
+        var taskUrl = $"{frontendUrl}/board/{task.Column.BoardId}/task/{task.Id}";
 
-        var assigning = task.UserTasks.Find(ut => ut.UserId == asignee.Id);
+        var assigning = task.UserTasks.Find(ut => ut.UserId == assignee.Id);
         if (assigning != null)
         {
             _context.UserTasks.Remove(assigning);
-            log = $"{user.Username} unassigned \"{task.Title}\" from {asignee.Username}";
+            log = $"*{user.Username}* unassigned _<{taskUrl}|{task.Title}>_ from *{assignee.Username}*";
         }
         else
         {
@@ -50,11 +55,11 @@ public class AssignTaskCommandHandler : IRequestHandler<AssignTaskCommand, Unit>
             {
                 Task = task,
                 TaskId = task.Id,
-                User = asignee,
-                UserId = asignee.Id
+                User = assignee,
+                UserId = assignee.Id
             };
             _context.UserTasks.Add(userTask);
-            log = $"{user.Username} assigned \"{task.Title}\" to {asignee.Username}";
+            log = $"*{user.Username}* assigned _<{taskUrl}|{task.Title}>_ to *{assignee.Username}*";
         }
 
 

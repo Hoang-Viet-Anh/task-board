@@ -2,7 +2,7 @@
 <div class="flex flex-row gap-2">
     <lucide-icon [img]="Dot" [size]="32" class="stroke-primary"></lucide-icon>
     <div class="flex flex-col">
-        <p class="text-start text-gray-700 whitespace-pre-line">{{item.log}}</p>
+        <p class="text-start text-gray-700 whitespace-pre-line" [innerHTML]="parseSlackMarkdown(item.log ?? '')"></p>
         <p class="text-primary/70 italic">{{item.createdAt | date:'MMM d'}} at {{item.createdAt | date: 'HH:mm'}}
         </p>
     </div>

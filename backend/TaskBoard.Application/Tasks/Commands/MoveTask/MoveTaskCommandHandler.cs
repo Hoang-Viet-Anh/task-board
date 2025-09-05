@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using TaskBoard.Application.ActivityLogs.Commands.CreateLog;
 using TaskBoard.Application.Common.Dtos;
 using TaskBoard.Application.Common.Exceptions;
@@ -14,11 +15,13 @@ public class MoveTaskCommandHandler : IRequestHandler<MoveTaskCommand, Unit>
 {
     public readonly IApplicationDbContext _context;
     public readonly IMediator _mediator;
+    public readonly IConfiguration _configuration;
 
-    public MoveTaskCommandHandler(IApplicationDbContext context, IMediator mediator)
+    public MoveTaskCommandHandler(IApplicationDbContext context, IMediator mediator, IConfiguration configuration)
     {
         _context = context;
         _mediator = mediator;
+        _configuration = configuration;
     }
 
     public async Task<Unit> Handle(MoveTaskCommand request, CancellationToken cancellationToken)
@@ -35,6 +38,9 @@ public class MoveTaskCommandHandler : IRequestHandler<MoveTaskCommand, Unit>
 
         if (!task.Column.Board.UserBoards.Any(ub => ub.UserId == user.Id)) throw new ForbiddenException();
 
+        var frontendUrl = _configuration["Frontend:Url"] ?? "";
+        var taskUrl = $"{frontendUrl}/board/{task.Column.BoardId}/task/{task.Id}";
+
         var log = new TaskActivityLog
         {
             Board = column.Board,
@@ -43,7 +49,7 @@ public class MoveTaskCommandHandler : IRequestHandler<MoveTaskCommand, Unit>
             TaskId = task.Id,
             User = user,
             UserId = user.Id,
-            Log = $"{user.Username} moved \"{task.Title}\" from \"{task.Column.Title}\" to \"{column.Title}\""
+            Log = $"*{user.Username}* moved _<{taskUrl}|{task.Title}>_ from *{task.Column.Title}* to *{column.Title}*"
         };
 
         task.ColumnId = request.TaskDto.ColumnId ?? task.ColumnId;

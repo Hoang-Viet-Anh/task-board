@@ -1,15 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { ColumnEntity } from '@app/features/selected-board/models/column.model';
 import { Log } from '@app/features/selected-board/models/log.model';
-import { getLogsByBoardId, loadMoreLogs } from '@app/features/selected-board/store/selected-board.actions';
+import { loadMoreLogs } from '@app/features/selected-board/store/selected-board.actions';
 import { selectSelectedBoardLogs } from '@app/features/selected-board/store/selected-board.selectors';
 import { Button } from "@app/shared/components/button/button";
 import { DrawerService } from '@app/shared/services/drawer.service';
 import { Store } from '@ngrx/store';
 import { Dot, LucideAngularModule, RotateCcw, X } from "lucide-angular";
 import { Observable } from 'rxjs';
+import { toHTML } from 'slack-markdown'
 
 @Component({
   selector: 'app-history-drawer',
@@ -41,5 +40,9 @@ export class HistoryDrawer {
 
   onLoadLogs() {
     this.store.dispatch(loadMoreLogs({ id: this.boardId }));
+  }
+
+  parseSlackMarkdown(log: string) {
+    return toHTML(log)
   }
 }

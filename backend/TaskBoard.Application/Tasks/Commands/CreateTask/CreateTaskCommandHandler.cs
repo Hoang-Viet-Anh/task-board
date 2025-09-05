@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using TaskBoard.Application.ActivityLogs.Commands.CreateLog;
 using TaskBoard.Application.Common.Dtos;
 using TaskBoard.Application.Common.Exceptions;
@@ -16,11 +17,13 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Unit>
 {
     public readonly IApplicationDbContext _context;
     public readonly IMediator _mediator;
+    public readonly IConfiguration _configuration;
 
-    public CreateTaskCommandHandler(IApplicationDbContext context, IMediator mediator)
+    public CreateTaskCommandHandler(IApplicationDbContext context, IMediator mediator, IConfiguration configuration)
     {
         _context = context;
         _mediator = mediator;
+        _configuration = configuration;
     }
 
     public async Task<Unit> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
@@ -45,6 +48,9 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Unit>
         };
         await _context.Tasks.AddAsync(task, cancellationToken: cancellationToken);
 
+        var frontendUrl = _configuration["Frontend:Url"] ?? "";
+        var taskUrl = $"{frontendUrl}/board/{task.Column.BoardId}/task/{task.Id}";
+
         var log = new TaskActivityLog
         {
             Board = column.Board,
@@ -53,7 +59,7 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Unit>
             TaskId = task.Id,
             User = user,
             UserId = user.Id,
-            Log = $"{user.Username} created \"{task.Title}\""
+            Log = $"*{user.Username}* created _<{taskUrl}|{task.Title}>_"
         };
         var command = new CreateLogCommand(log);
         await _mediator.Send(command, cancellationToken);

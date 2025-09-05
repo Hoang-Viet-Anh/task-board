@@ -25,11 +25,15 @@ export const routes: Routes = [
         ]
     },
     {
-        path: 'board/:id',
+        path: 'board/:boardId',
         component: HeaderLayout,
         children: [
             {
                 path: '',
+                component: SelectedBoard
+            },
+            {
+                path: 'task/:taskId',
                 component: SelectedBoard
             }
         ]
