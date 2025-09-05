@@ -26,6 +26,9 @@ services:
       - Jwt__Secret=${Jwt__Secret};
       - Jwt__Issuer=${Jwt__Issuer};
       - Jwt__Audience=${Jwt__Audience};
+      - SlackApp__Token=${SlackApp__Token};
+      - SlackApp__ChannelId=${SlackApp__ChannelId};
+      - Frontend__Url=${Frontend__Url};
     depends_on:
       taskboard-postgres:
         condition: service_healthy
