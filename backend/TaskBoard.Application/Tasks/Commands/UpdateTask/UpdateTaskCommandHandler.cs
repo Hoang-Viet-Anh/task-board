@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using TaskBoard.Application.ActivityLogs.Commands.CreateLog;
 using TaskBoard.Application.Common.Dtos;
 using TaskBoard.Application.Common.Exceptions;
@@ -15,11 +16,13 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, Unit>
 {
     public readonly IApplicationDbContext _context;
     public readonly IMediator _mediator;
+    public readonly IConfiguration _configuration;
 
-    public UpdateTaskCommandHandler(IApplicationDbContext context, IMediator mediator)
+    public UpdateTaskCommandHandler(IApplicationDbContext context, IMediator mediator, IConfiguration configuration)
     {
         _context = context;
         _mediator = mediator;
+        _configuration = configuration;
     }
 
     public async Task<Unit> Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
@@ -40,19 +43,19 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, Unit>
 
         if (request.TaskDto.Title != null && request.TaskDto.Title != task.Title)
         {
-            changes.Add($"• Title changed from \"{task.Title}\" to \"{request.TaskDto.Title}\"");
+            changes.Add($"• Title changed from *{task.Title}* to *{request.TaskDto.Title}*");
             task.Title = request.TaskDto.Title;
         }
 
         if (request.TaskDto.Description != null && request.TaskDto.Description != task.Description)
         {
-            changes.Add($"• Description updated");
+            changes.Add("• Description updated");
             task.Description = request.TaskDto.Description;
         }
 
         if (request.TaskDto.DueDate.HasValue && request.TaskDto.DueDate != task.DueDate)
         {
-            changes.Add($"• Due date changed from \"{task.DueDate:dd.MM.yyyy}\" to \"{request.TaskDto.DueDate.Value:dd.MM.yyyy}\"");
+            changes.Add($"• Due date changed from *{task.DueDate:dd.MM.yyyy}* to *{request.TaskDto.DueDate.Value:dd.MM.yyyy}*");
             task.DueDate = (DateTime)request.TaskDto.DueDate;
         }
 
@@ -61,17 +64,20 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, Unit>
             var parsedPriority = Enum.Parse<TaskPriority>(request.TaskDto.Priority.ToUpper());
             if (parsedPriority != task.Priority)
             {
-                changes.Add($"• Priority changed from \"{task.Priority}\" to \"{parsedPriority}\"");
+                changes.Add($"• Priority changed from *{task.Priority}* to *{parsedPriority}*");
                 task.Priority = parsedPriority;
             }
         }
 
         if (column.Id != task.ColumnId)
         {
-            changes.Add($"• Moved from \"{task.Column.Title}\" to \"{column.Title}\"");
+            changes.Add($"• Moved from *{task.Column.Title}* to *{column.Title}*");
             task.ColumnId = request.TaskDto.ColumnId ?? task.ColumnId;
             task.Column = column;
         }
+
+        var frontendUrl = _configuration["Frontend:Url"] ?? "";
+        var taskUrl = $"{frontendUrl}/board/{task.Column.BoardId}/task/{task.Id}";
 
         var log = string.Join("\n", changes);
         var activityLog = new TaskActivityLog
@@ -82,7 +88,7 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, Unit>
             TaskId = task.Id,
             User = user,
             UserId = user.Id,
-            Log = $"{user.Username} updated \"{task.Title}\":\n{log}"
+            Log = $"*{user.Username}* updated _<{taskUrl}|{task.Title}>_:\n{log}"
         };
         var command = new CreateLogCommand(activityLog);
         await _mediator.Send(command, cancellationToken);

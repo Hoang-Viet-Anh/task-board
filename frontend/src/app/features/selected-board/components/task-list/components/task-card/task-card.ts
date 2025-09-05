@@ -37,7 +37,6 @@ export class TaskCard {
     if (!this.isDragged)
       this.dialogService.open(TaskDialog, {
         taskId: this.task.id,
-        columnId: this.column.id
       })
   }
 }

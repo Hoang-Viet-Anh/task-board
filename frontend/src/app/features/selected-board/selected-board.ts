@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { History, LucideAngularModule } from "lucide-angular";
 import { TaskList } from "./components/task-list/task-list";
 import { Store } from '@ngrx/store';
-import { getBoardById } from './store/selected-board.actions';
-import { map, Observable } from 'rxjs';
+import { getBoardById, getColumnsByBoardId, getColumnsByBoardIdSuccess } from './store/selected-board.actions';
+import { combineLatest, map, Observable, take, tap } from 'rxjs';
 import { selectGetColumnsByBoardIdStatus, selectSelectedBoard, selectSelectedBoardColumns } from './store/selected-board.selectors';
 import { CommonModule } from '@angular/common';
 import { ColumnEntity } from './models/column.model';
@@ -13,6 +13,9 @@ import { AddListCard } from "./components/add-list-card/add-list-card";
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { HistoryActions } from "./components/history-actions/history-actions";
 import { moveColumnRequest } from './components/task-list/components/column-menu/store/column-menu.actions';
+import { DialogService } from '@app/shared/services/dialog.service';
+import { Actions, ofType } from '@ngrx/effects';
+import { TaskDialog } from './components/task-list/components/task-card/components/task-dialog/task-dialog';
 
 @Component({
   selector: 'app-selected-board',
@@ -25,7 +28,8 @@ import { moveColumnRequest } from './components/task-list/components/column-menu
 })
 export class SelectedBoard implements OnInit {
   readonly History = History
-  boardId!: string;
+  boardId: string = '';
+  taskId: string = '';
   boardTitle$: Observable<string | undefined>;
   inviteCode$: Observable<string | undefined>;
   boardColumns$: Observable<ColumnEntity[]>;
@@ -33,11 +37,18 @@ export class SelectedBoard implements OnInit {
   isLoading$: Observable<boolean>
 
   constructor(
-    private readonly route: ActivatedRoute,
-    private readonly store: Store
+    private route: ActivatedRoute,
+    private store: Store,
+    private dialogService: DialogService,
+    private actions$: Actions,
+    private router: Router
   ) {
-    this.route.paramMap.subscribe(params => {
-      this.boardId = params.get('id')!;
+    combineLatest([
+      this.route.paramMap,
+      this.route.parent!.paramMap
+    ]).subscribe(([childParams, parentParams]) => {
+      this.boardId = parentParams.get('boardId') ?? '';
+      this.taskId = childParams.get('taskId') ?? '';
     });
 
     this.boardTitle$ = this.store.select(selectSelectedBoard).pipe(map(state => state?.title))
@@ -50,6 +61,18 @@ export class SelectedBoard implements OnInit {
   ngOnInit(): void {
     if (this.boardId)
       this.store.dispatch(getBoardById({ id: this.boardId }))
+    if (this.taskId) {
+      this.actions$.pipe(
+        ofType(getColumnsByBoardIdSuccess),
+        take(1),
+        tap(() => {
+          this.dialogService.open(TaskDialog, {
+            taskId: this.taskId
+          })
+          this.router.navigate([`board/${this.boardId}`])
+        })
+      ).subscribe()
+    }
   }
 
   onColumnDrop(event: CdkDragDrop<any>) {

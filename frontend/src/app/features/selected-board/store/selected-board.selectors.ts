@@ -15,4 +15,4 @@ export const selectLogsPage = createSelector(selectSelectedBoardState, state => 
 export const selectBoardMembers = createSelector(selectSelectedBoardState, state => state.board?.members)
 
 export const selectTaskById = (taskId: string) => createSelector(selectSelectedBoardColumns, state => state.flatMap(col => col.tasks).find(t => t?.id === taskId))
-export const selectColumnById = (columnId: string) => createSelector(selectSelectedBoardColumns, state => state.find(c => c.id === columnId))
+export const selectColumnByTaskId = (taskId: string) => createSelector(selectSelectedBoardColumns, state => state.find(c => c.tasks?.find(t => t?.id === taskId)))
