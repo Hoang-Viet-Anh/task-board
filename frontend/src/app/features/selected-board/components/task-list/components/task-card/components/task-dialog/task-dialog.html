@@ -1,16 +1,18 @@
 <app-dialog-layout [cardClass]="'!p-0 !border-none'" [closeButtonClass]="'stroke-white'">
     <div class="flex flex-col w-7xl h-[80vh]">
         <div class="w-full h-16 bg-primary rounded-t-lg"></div>
-        <div class="flex flex-row w-full h-[calc(100%-64px)]" *ngIf="task$ | async as task">
-            <div class="flex flex-col w-full gap-10 p-10 basis-3/5" *ngIf="column$ | async as column">
-                <h2 class="font-bold text-3xl w-60 line-clamp-1">{{task.title}}</h2>
+        <div class="flex flex-row w-full grow shrink basis-0" *ngIf="task$ | async as task">
+            <div class="flex flex-col w-full h-full gap-10 p-10 basis-3/5" *ngIf="column$ | async as column">
+                <div class="w-60 h-fit py-2">
+                    <h2 class="font-bold text-3xl w-full truncate text-nowrap">{{task.title}}</h2>
+                </div>
 
                 <div class="grid grid-cols-2 grid-rows-3 items-center gap-6 w-1/2">
                     <div class="flex flex-row gap-2 items-center">
                         <lucide-icon [img]="List" class="stroke-primary"></lucide-icon>
                         <p class="text-primary">List</p>
                     </div>
-                    <p>{{column.title}}</p>
+                    <p class="truncate text-nowrap">{{column.title}}</p>
 
                     <div class="flex flex-row gap-2 items-center">
                         <lucide-icon [img]="Calendar" class="stroke-primary"></lucide-icon>
@@ -31,15 +33,20 @@
                     <app-task-assignee [task]="task" [column]="column"></app-task-assignee>
                 </div>
 
-                <div class="flex flex-col w-full gap-2">
+                <div class="flex flex-col w-full grow shrink basis-0 gap-2 overflow-hidden">
                     <h2 class="font-semibold text-xl">Description</h2>
-                    <p class="text-primary">{{task.description}}</p>
+                    <div class="flex flex-col w-full h-full overflow-y-auto">
+                        <p class="text-primary">{{task.description}}</p>
+                    </div>
                 </div>
             </div>
 
-            <app-task-logs [task]="task"
-                class="flex flex-col gap-4 bg-secondary/40 basis-2/5 rounded-br-xl p-8 h-full overflow-y-auto"></app-task-logs>
-
+            <div class="flex flex-col basis-2/5 w-full h-full bg-secondary/40 rounded-br-xl">
+                <div class="flex flex-col w-full grow shrink basis-0 gap-2 overflow-hidden">
+                    <app-task-logs [task]="task"
+                        class="flex flex-col gap-4 w-full h-full overflow-y-auto p-8"></app-task-logs>
+                </div>
+            </div>
         </div>
 
     </div>

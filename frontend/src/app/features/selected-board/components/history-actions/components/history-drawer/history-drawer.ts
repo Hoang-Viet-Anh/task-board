@@ -16,7 +16,7 @@ import { toHTML } from 'slack-markdown'
   templateUrl: './history-drawer.html',
   styleUrl: './history-drawer.css',
   host: {
-    class: 'h-full'
+    class: 'flex flex-col h-full'
   }
 })
 export class HistoryDrawer {

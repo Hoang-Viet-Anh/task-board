@@ -5,5 +5,5 @@ export interface ColumnEntity {
     title?: string,
     boardId?: string,
     tasks?: TaskEntity[],
-    order?: number
+    order?: string
 }

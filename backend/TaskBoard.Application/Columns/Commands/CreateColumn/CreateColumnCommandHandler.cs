@@ -29,9 +29,6 @@ public class CreateColumnCommandHandler : IRequestHandler<CreateColumnCommand, U
 
         if (!board.UserBoards.Any(ub => ub.UserId == user.Id)) throw new ForbiddenException();
 
-        var lastColumn = board.Columns.OrderBy(c => c.Order).LastOrDefault();
-        var order = lastColumn != null ? lastColumn.Order + 1000 : 1000;
-
         if (request.ColumnDto.Title != null)
         {
             var column = new Column
@@ -39,7 +36,7 @@ public class CreateColumnCommandHandler : IRequestHandler<CreateColumnCommand, U
                 Title = request.ColumnDto.Title,
                 BoardId = board.Id,
                 Board = board,
-                Order = order
+                Order = request.ColumnDto.Order!
             };
             await _context.Columns.AddAsync(column, cancellationToken: cancellationToken);
         }

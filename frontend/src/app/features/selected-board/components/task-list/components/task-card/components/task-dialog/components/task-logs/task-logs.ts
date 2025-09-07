@@ -8,7 +8,7 @@ import { toHTML } from 'slack-markdown';
   selector: 'app-task-logs',
   imports: [CommonModule, LucideAngularModule],
   templateUrl: './task-logs.html',
-  styleUrl: './task-logs.css'
+  styleUrl: './task-logs.css',
 })
 export class TaskLogs {
   readonly Dot = Dot

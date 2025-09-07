@@ -4,7 +4,7 @@
         (toggleShowInput)="toggleColumnEdit($event)" class="w-full"></app-list-title-input>
     }
     @else {
-    <h2>{{column.title}}</h2>
+    <h2 class="text-nowrap truncate">{{column.title}}</h2>
     <div class="flex flex-row items-center gap-2">
         <p>{{column.tasks?.length}}</p>
         <app-dropdown-menu [open]="openDropdown()" (onClose)="toggleDropdown(false)">

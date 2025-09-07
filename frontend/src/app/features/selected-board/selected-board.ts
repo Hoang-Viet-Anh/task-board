@@ -16,6 +16,7 @@ import { moveColumnRequest } from './components/task-list/components/column-menu
 import { DialogService } from '@app/shared/services/dialog.service';
 import { Actions, ofType } from '@ngrx/effects';
 import { TaskDialog } from './components/task-list/components/task-card/components/task-dialog/task-dialog';
+import { generateKeyBetween } from "fractional-indexing";
 
 @Component({
   selector: 'app-selected-board',
@@ -91,9 +92,8 @@ export class SelectedBoard implements OnInit {
     const currentItem = currentList[currentIndex]
     const rightItem = currentList[currentIndex + 1]
 
-    let newOrderValue = leftItem?.order && rightItem?.order ? (leftItem.order + rightItem.order) / 2 :
-      leftItem?.order ? leftItem.order + 1000 :
-        rightItem?.order ? rightItem.order - 1000 : 0
+    let newOrderValue = generateKeyBetween(leftItem?.order, rightItem?.order)
+
 
     const changedColumn: ColumnEntity = {
       ...currentItem,
