@@ -3,7 +3,7 @@
         'flex flex-row gap-2 justify-between items-center !px-3',
         selectClass
     ].join(' ')">
-        <p>{{value?.title ?? title}}</p>
+        <p class="text-nowrap truncate">{{value?.title ?? title}}</p>
         <lucide-icon [img]="ChevronDown" [size]="20" class="transition-transform duration-100 stroke-primary" [ngClass]="{
             'rotate-180': open()
         }">
@@ -18,7 +18,7 @@
         @else {
         @for (item of filteredList(); track item.value) {
         <app-button variant="ghost" (clicked)="selectItem(item)" [buttonClass]="'w-full !rounded-none'">
-            {{item.title}}
+            <p class="text-nowrap truncate">{{item.title}}</p>
         </app-button>
         }
         }

@@ -17,11 +17,13 @@ public static class ConfigureServices
     {
         services.AddHttpContextAccessor();
 
+        var frontendUrl = configuration["Frontend:Url"] ?? "http://localhost:4200";
+
         services.AddCors(options =>
         {
             options.AddPolicy("Frontend", policy =>
             {
-                policy.WithOrigins("http://localhost:4200")
+                policy.WithOrigins(frontendUrl)
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials();

@@ -7,6 +7,9 @@ import { Store } from '@ngrx/store';
 import { addListRequest } from '../../store/add-list.actions';
 import { ColumnEntity } from '@app/features/selected-board/models/column.model';
 import { updateColumnRequest } from '../../../task-list/components/column-menu/store/column-menu.actions';
+import { Observable } from 'rxjs';
+import { selectSelectedBoardColumns } from '@app/features/selected-board/store/selected-board.selectors';
+import { generateKeyBetween } from 'fractional-indexing';
 
 @Component({
   selector: 'app-list-title-input',
@@ -26,8 +29,10 @@ export class ListTitleInput implements OnInit {
   @Output() toggleShowInput = new EventEmitter<boolean>();
 
   listTitle = signal<string>('')
+  boardColumns$: Observable<ColumnEntity[]>;
 
   constructor(private store: Store) {
+    this.boardColumns$ = this.store.select(selectSelectedBoardColumns)
   }
 
   ngOnInit(): void {
@@ -48,7 +53,7 @@ export class ListTitleInput implements OnInit {
     this.toggleShowInput.emit(state);
   }
 
-  createList() {
+  createList(columns: ColumnEntity[]) {
     if (this.listTitle().trim().length === 0) {
       this.onInputClose(false)
       return;
@@ -61,10 +66,16 @@ export class ListTitleInput implements OnInit {
         title: this.listTitle(),
         boardId: this.column.boardId,
       }))
-    else
+    else {
+      const lastElement = columns.at(-1)
+
+      const orderValue = generateKeyBetween(lastElement?.order, undefined)
+
       this.store.dispatch(addListRequest({
         title: this.listTitle(),
         boardId: this.column.boardId,
+        order: orderValue
       }))
+    }
   }
 }

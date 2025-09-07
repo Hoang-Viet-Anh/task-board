@@ -17,8 +17,11 @@ builder.Services.AddApiServices(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
+
+app.MapHealthChecks("/health");
 
 if (app.Environment.IsDevelopment())
 {
@@ -46,7 +49,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 app.UseCors("Frontend");
-app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
