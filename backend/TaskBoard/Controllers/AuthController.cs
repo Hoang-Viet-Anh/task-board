@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Sprache;
 using TaskBoard.Application.Authentication.Commands.Login;
 using TaskBoard.Application.Authentication.Commands.RefreshToken;
 using TaskBoard.Application.Authentication.Commands.Register;
@@ -23,16 +24,21 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegistrationUserCommand command)
     {
-        await _mediator.Send(command);
+        var result = await _mediator.Send(command);
+
+        if (!result.IsSuccess) throw result.Error;
+
         return Created();
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginUserCommand command)
     {
-        var tokenResponse = await _mediator.Send(command);
+        var result = await _mediator.Send(command);
 
-        _jwtProviderService.SetJwtCookies(tokenResponse, Response);
+        if (!result.IsSuccess) throw result.Error;
+
+        _jwtProviderService.SetJwtCookies(result.Value, Response);
 
         return Ok();
     }
@@ -41,10 +47,16 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> RefreshTokens()
     {
         _jwtProviderService.ClearJwtCookies(Response);
+
         var refreshToken = Request.Cookies[JwtProviderService.RefreshTokenKey] ?? throw new UnauthorizedAccessException();
+
         var command = new RefreshTokenCommand(refreshToken);
-        var tokenResponse = await _mediator.Send(command);
-        _jwtProviderService.SetJwtCookies(tokenResponse, Response);
+
+        var result = await _mediator.Send(command);
+
+        if (!result.IsSuccess) throw result.Error;
+
+        _jwtProviderService.SetJwtCookies(result.Value, Response);
 
         return Ok();
     }

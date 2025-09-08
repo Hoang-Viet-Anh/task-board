@@ -31,7 +31,9 @@ public class TaskController : ControllerBase
         var userId = _currentUserService.GetUserId();
 
         var command = new CreateTaskCommand(userId, taskDto);
-        await _mediator.Send(command);
+        var result = await _mediator.Send(command);
+
+        if (!result.IsSuccess) throw result.Error;
 
         return Created();
     }
@@ -42,7 +44,9 @@ public class TaskController : ControllerBase
         var userId = _currentUserService.GetUserId();
 
         var command = new UpdateTaskCommand(userId, TaskDto);
-        await _mediator.Send(command);
+        var result = await _mediator.Send(command);
+
+        if (!result.IsSuccess) throw result.Error;
 
         return Ok();
     }
@@ -53,7 +57,9 @@ public class TaskController : ControllerBase
         var userId = _currentUserService.GetUserId();
 
         var command = new MoveTaskCommand(userId, TaskDto);
-        await _mediator.Send(command);
+        var result = await _mediator.Send(command);
+
+        if (!result.IsSuccess) throw result.Error;
 
         return Ok();
     }
@@ -64,7 +70,9 @@ public class TaskController : ControllerBase
         var userId = _currentUserService.GetUserId();
 
         var command = new AssignTaskCommand(userId, AssignDto);
-        await _mediator.Send(command);
+        var result = await _mediator.Send(command);
+
+        if (!result.IsSuccess) throw result.Error;
 
         return Ok();
     }
@@ -75,9 +83,11 @@ public class TaskController : ControllerBase
         var userId = _currentUserService.GetUserId();
 
         var query = new GetTaskByIdQuery(userId, TaskId);
-        var TaskDto = await _mediator.Send(query);
+        var result = await _mediator.Send(query);
 
-        return Ok(TaskDto);
+        if (!result.IsSuccess) throw result.Error;
+
+        return Ok(result.Value);
     }
 
     [HttpDelete("delete/{TaskId}")]
@@ -86,7 +96,9 @@ public class TaskController : ControllerBase
         var userId = _currentUserService.GetUserId();
 
         var command = new DeleteTaskCommand(userId, TaskId);
-        await _mediator.Send(command);
+        var result = await _mediator.Send(command);
+
+        if (!result.IsSuccess) throw result.Error;
 
         return Ok();
     }

@@ -31,7 +31,9 @@ public class BoardController : ControllerBase
         var userId = _currentUserService.GetUserId();
         var command = new CreateBoardCommand(userId, request.BoardTitle);
 
-        await _mediator.Send(command);
+        var result = await _mediator.Send(command);
+
+        if (!result.IsSuccess) throw result.Error;
 
         return Created();
     }
@@ -41,7 +43,11 @@ public class BoardController : ControllerBase
     {
         var userId = _currentUserService.GetUserId();
         var command = new UpdateBoardCommand(userId, boardDto);
-        await _mediator.Send(command);
+
+        var result = await _mediator.Send(command);
+
+        if (!result.IsSuccess) throw result.Error;
+
         return Ok();
     }
 
@@ -50,8 +56,12 @@ public class BoardController : ControllerBase
     {
         var userId = _currentUserService.GetUserId();
         var query = new GetBoardByIdQuery(userId, boardId);
-        var boardDto = await _mediator.Send(query);
-        return Ok(boardDto);
+
+        var result = await _mediator.Send(query);
+
+        if (!result.IsSuccess) throw result.Error;
+
+        return Ok(result.Value);
     }
 
     [HttpGet]
@@ -59,9 +69,12 @@ public class BoardController : ControllerBase
     {
         var userId = _currentUserService.GetUserId();
         var query = new GetAllBoardsQuery(userId);
-        var boards = await _mediator.Send(query);
 
-        return Ok(boards);
+        var result = await _mediator.Send(query);
+
+        if (!result.IsSuccess) throw result.Error;
+
+        return Ok(result.Value);
     }
 
     [HttpDelete("leave/{boardId}")]
@@ -69,7 +82,11 @@ public class BoardController : ControllerBase
     {
         var userId = _currentUserService.GetUserId();
         var command = new LeaveBoardCommand(userId, boardId);
-        await _mediator.Send(command);
+
+        var result = await _mediator.Send(command);
+
+        if (!result.IsSuccess) throw result.Error;
+
         return Ok();
     }
 
@@ -78,7 +95,11 @@ public class BoardController : ControllerBase
     {
         var userId = _currentUserService.GetUserId();
         var command = new JoinBoardCommand(userId, inviteCode);
-        await _mediator.Send(command);
+
+        var result = await _mediator.Send(command);
+
+        if (!result.IsSuccess) throw result.Error;
+
         return Ok();
     }
 }

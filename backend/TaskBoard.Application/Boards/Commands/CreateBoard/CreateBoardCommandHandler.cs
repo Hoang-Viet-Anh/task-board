@@ -1,13 +1,15 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using TaskBoard.Application.Common.Exceptions;
 using TaskBoard.Application.Common.Interfaces;
+using TaskBoard.Application.Common.Result;
 using TaskBoard.Domain.Entities;
 
 namespace TaskBoard.Application.Boards.Commands.CreateBoard;
 
-public record CreateBoardCommand(Guid UserId, string BoardTitle) : IRequest<Unit>;
+public record CreateBoardCommand(Guid UserId, string BoardTitle) : IRequest<Result<Unit>>;
 
-public class CreateBoardCommandHandler : IRequestHandler<CreateBoardCommand, Unit>
+public class CreateBoardCommandHandler : IRequestHandler<CreateBoardCommand, Result<Unit>>
 {
     public readonly IApplicationDbContext _context;
     public readonly IInviteCodeGenerator _codeGenerator;
@@ -18,9 +20,14 @@ public class CreateBoardCommandHandler : IRequestHandler<CreateBoardCommand, Uni
         _codeGenerator = codeGenerator;
     }
 
-    public async Task<Unit> Handle(CreateBoardCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Unit>> Handle(CreateBoardCommand request, CancellationToken cancellationToken)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken: cancellationToken) ?? throw new UnauthorizedAccessException();
+        if (string.IsNullOrEmpty(request.BoardTitle.Trim())) return Result<Unit>.Failure(new BadRequestException("Board title is required."));
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken: cancellationToken);
+
+        if (user == null) return Result<Unit>.Failure(new UnauthorizedAccessException());
+
         string inviteCode = await _codeGenerator.GenerateUniqueInviteCode(cancellationToken);
 
         var board = new Board
@@ -43,6 +50,6 @@ public class CreateBoardCommandHandler : IRequestHandler<CreateBoardCommand, Uni
         await _context.UserBoards.AddAsync(userBoard, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Unit.Value;
+        return Result<Unit>.Success(Unit.Value);
     }
 }

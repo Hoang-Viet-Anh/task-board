@@ -18,7 +18,8 @@ public class EntityMappingProfiles : Profile
 
         CreateMap<Column, ColumnDto>();
         CreateMap<Board, BoardDto>()
-            .ForMember(dest => dest.Members, opt => opt.MapFrom(src => src.UserBoards.Select(ub => ub.User)));
+            .ForMember(dest => dest.Members, opt => opt.MapFrom(src => src.UserBoards.Select(ub => ub.User)))
+            .ForMember(dest => dest.IsOwner, opt => opt.Ignore());
 
     }
 }

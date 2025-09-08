@@ -5,13 +5,14 @@ using TaskBoard.Application.ActivityLogs.Commands.CreateLog;
 using TaskBoard.Application.Common.Dtos;
 using TaskBoard.Application.Common.Exceptions;
 using TaskBoard.Application.Common.Interfaces;
+using TaskBoard.Application.Common.Result;
 using TaskBoard.Domain.Entities;
 
 namespace TaskBoard.Application.Tasks.Commands.MoveTask;
 
-public record MoveTaskCommand(Guid UserId, TaskDto TaskDto) : IRequest<Unit>;
+public record MoveTaskCommand(Guid UserId, TaskDto TaskDto) : IRequest<Result<Unit>>;
 
-public class MoveTaskCommandHandler : IRequestHandler<MoveTaskCommand, Unit>
+public class MoveTaskCommandHandler : IRequestHandler<MoveTaskCommand, Result<Unit>>
 {
     public readonly IApplicationDbContext _context;
     public readonly IMediator _mediator;
@@ -24,19 +25,25 @@ public class MoveTaskCommandHandler : IRequestHandler<MoveTaskCommand, Unit>
         _configuration = configuration;
     }
 
-    public async Task<Unit> Handle(MoveTaskCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Unit>> Handle(MoveTaskCommand request, CancellationToken cancellationToken)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken: cancellationToken) ?? throw new UnauthorizedAccessException();
-        if (request.TaskDto.ColumnId == null) throw new BadRequestException();
-        var column = await _context.Columns.FirstOrDefaultAsync(c => c.Id == request.TaskDto.ColumnId, cancellationToken: cancellationToken) ?? throw new NotFoundException("Column not found");
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken: cancellationToken);
+
+        if (user == null) return Result<Unit>.Failure(new UnauthorizedAccessException());
+        if (request.TaskDto.ColumnId == null) return Result<Unit>.Failure(new BadRequestException());
+
+        var column = await _context.Columns.FirstOrDefaultAsync(c => c.Id == request.TaskDto.ColumnId, cancellationToken: cancellationToken);
+
+        if (column == null) return Result<Unit>.Failure(new NotFoundException("Column not found"));
 
         var task = await _context.Tasks
         .Include(t => t.Column)
         .ThenInclude(c => c.Board)
         .ThenInclude(b => b.UserBoards)
-        .FirstOrDefaultAsync(t => t.Id == Guid.Parse(request.TaskDto.Id!), cancellationToken: cancellationToken) ?? throw new NotFoundException("Task not found");
+        .FirstOrDefaultAsync(t => t.Id == request.TaskDto.Id, cancellationToken: cancellationToken);
 
-        if (!task.Column.Board.UserBoards.Any(ub => ub.UserId == user.Id)) throw new ForbiddenException();
+        if (task == null) return Result<Unit>.Failure(new NotFoundException("Task not found"));
+        if (!task.Column.Board.UserBoards.Any(ub => ub.UserId == user.Id)) return Result<Unit>.Failure(new ForbiddenException());
 
         var frontendUrl = _configuration["Frontend:Url"] ?? "";
         var taskUrl = $"{frontendUrl}/board/{task.Column.BoardId}/task/{task.Id}";
@@ -56,8 +63,8 @@ public class MoveTaskCommandHandler : IRequestHandler<MoveTaskCommand, Unit>
         task.Column = column;
 
         var command = new CreateLogCommand(log);
-        await _mediator.Send(command, cancellationToken);
+        var result = await _mediator.Send(command, cancellationToken);
 
-        return Unit.Value;
+        return result;
     }
 }

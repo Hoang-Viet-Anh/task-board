@@ -4,13 +4,14 @@ using Microsoft.Extensions.Configuration;
 using TaskBoard.Application.ActivityLogs.Commands.CreateLog;
 using TaskBoard.Application.Common.Exceptions;
 using TaskBoard.Application.Common.Interfaces;
+using TaskBoard.Application.Common.Result;
 using TaskBoard.Domain.Entities;
 
 namespace TaskBoard.Application.Tasks.Commands.DeleteTask;
 
-public record DeleteTaskCommand(Guid UserId, Guid TaskId) : IRequest<Unit>;
+public record DeleteTaskCommand(Guid UserId, Guid TaskId) : IRequest<Result<Unit>>;
 
-public class DeleteTaskCommandHandler : IRequestHandler<DeleteTaskCommand, Unit>
+public class DeleteTaskCommandHandler : IRequestHandler<DeleteTaskCommand, Result<Unit>>
 {
     public readonly IApplicationDbContext _context;
     public readonly IMediator _mediator;
@@ -23,16 +24,20 @@ public class DeleteTaskCommandHandler : IRequestHandler<DeleteTaskCommand, Unit>
         _configuration = configuration;
     }
 
-    public async Task<Unit> Handle(DeleteTaskCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Unit>> Handle(DeleteTaskCommand request, CancellationToken cancellationToken)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken: cancellationToken) ?? throw new UnauthorizedAccessException();
-        var task = await _context.Tasks
-            .Include(t => t.Column)
-            .ThenInclude(c => c.Board)
-            .ThenInclude(b => b.UserBoards)
-            .FirstOrDefaultAsync(t => t.Id == request.TaskId, cancellationToken: cancellationToken) ?? throw new NotFoundException("Task not found");
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken: cancellationToken);
 
-        if (!task.Column.Board.UserBoards.Any(ub => ub.UserId == user.Id)) throw new ForbiddenException();
+        if (user == null) return Result<Unit>.Failure(new UnauthorizedAccessException());
+
+        var task = await _context.Tasks
+                .Include(t => t.Column)
+                .ThenInclude(c => c.Board)
+                .ThenInclude(b => b.UserBoards)
+                .FirstOrDefaultAsync(t => t.Id == request.TaskId, cancellationToken: cancellationToken);
+
+        if (task == null) return Result<Unit>.Success(Unit.Value);
+        if (!task.Column.Board.UserBoards.Any(ub => ub.UserId == user.Id)) return Result<Unit>.Failure(new ForbiddenException());
 
         _context.Tasks.Remove(task);
 
@@ -50,8 +55,8 @@ public class DeleteTaskCommandHandler : IRequestHandler<DeleteTaskCommand, Unit>
             Log = $"*{user.Username}* removed _<{taskUrl}|{task.Title}>_"
         };
         var command = new CreateLogCommand(log);
-        await _mediator.Send(command, cancellationToken);
+        var result = await _mediator.Send(command, cancellationToken);
 
-        return Unit.Value;
+        return result;
     }
 }

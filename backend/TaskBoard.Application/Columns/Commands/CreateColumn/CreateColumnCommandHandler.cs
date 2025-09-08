@@ -3,13 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using TaskBoard.Application.Common.Dtos;
 using TaskBoard.Application.Common.Exceptions;
 using TaskBoard.Application.Common.Interfaces;
+using TaskBoard.Application.Common.Result;
 using TaskBoard.Domain.Entities;
 
 namespace TaskBoard.Application.Columns.Commands.CreateColumn;
 
-public record CreateColumnCommand(Guid UserId, ColumnDto ColumnDto) : IRequest<Unit>;
+public record CreateColumnCommand(Guid UserId, ColumnDto ColumnDto) : IRequest<Result<Unit>>;
 
-public class CreateColumnCommandHandler : IRequestHandler<CreateColumnCommand, Unit>
+public class CreateColumnCommandHandler : IRequestHandler<CreateColumnCommand, Result<Unit>>
 {
     public readonly IApplicationDbContext _context;
 
@@ -18,16 +19,21 @@ public class CreateColumnCommandHandler : IRequestHandler<CreateColumnCommand, U
         _context = context;
     }
 
-    public async Task<Unit> Handle(CreateColumnCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Unit>> Handle(CreateColumnCommand request, CancellationToken cancellationToken)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken: cancellationToken) ?? throw new UnauthorizedAccessException();
-        if (request.ColumnDto.BoardId == null) throw new BadRequestException();
+        if (string.IsNullOrEmpty(request.ColumnDto.Title?.Trim())) return Result<Unit>.Failure(new BadRequestException("Column title is required."));
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken: cancellationToken);
+
+        if (user == null) return Result<Unit>.Failure(new UnauthorizedAccessException());
+        if (request.ColumnDto.BoardId == null) return Result<Unit>.Failure(new BadRequestException("Board Id is required."));
+
         var board = await _context.Boards
         .Include(b => b.UserBoards)
-        .Include(b => b.Columns)
-        .FirstOrDefaultAsync(b => b.Id == Guid.Parse(request.ColumnDto.BoardId), cancellationToken: cancellationToken) ?? throw new NotFoundException("Board is not found");
+        .FirstOrDefaultAsync(b => b.Id == request.ColumnDto.BoardId, cancellationToken: cancellationToken);
 
-        if (!board.UserBoards.Any(ub => ub.UserId == user.Id)) throw new ForbiddenException();
+        if (board == null) return Result<Unit>.Failure(new NotFoundException("Board is not found"));
+        if (!board.UserBoards.Any(ub => ub.UserId == user.Id)) return Result<Unit>.Failure(new ForbiddenException());
 
         if (request.ColumnDto.Title != null)
         {
@@ -43,6 +49,6 @@ public class CreateColumnCommandHandler : IRequestHandler<CreateColumnCommand, U
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Unit.Value;
+        return Result<Unit>.Success(Unit.Value);
     }
 }

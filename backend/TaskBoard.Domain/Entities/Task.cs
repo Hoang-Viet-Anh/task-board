@@ -10,7 +10,7 @@ public class Task : BaseAuditableEntity
     public required DateTime DueDate { get; set; }
     public required TaskPriority Priority { get; set; }
     public required Guid ColumnId { get; set; }
-    public required Column Column { get; set; }
+    public Column Column { get; set; } = null!;
     public List<UserTask> UserTasks { get; set; } = [];
     public List<TaskActivityLog> TaskActivityLogs { get; set; } = [];
 }

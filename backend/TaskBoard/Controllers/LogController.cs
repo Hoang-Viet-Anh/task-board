@@ -25,9 +25,11 @@ public class LogController : ControllerBase
         var userId = _currentUserService.GetUserId();
 
         var query = new GetLogByBoardIdQuery(userId, BoardId, Page);
-        var columns = await _mediator.Send(query);
+        var result = await _mediator.Send(query);
 
-        return Ok(columns);
+        if (!result.IsSuccess) throw result.Error;
+
+        return Ok(result.Value);
     }
 
 }

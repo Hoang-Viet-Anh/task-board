@@ -5,13 +5,14 @@ using TaskBoard.Application.ActivityLogs.Commands.CreateLog;
 using TaskBoard.Application.Common.Dtos;
 using TaskBoard.Application.Common.Exceptions;
 using TaskBoard.Application.Common.Interfaces;
+using TaskBoard.Application.Common.Result;
 using TaskBoard.Domain.Entities;
 
 namespace TaskBoard.Application.Tasks.Commands.AssignTask;
 
-public record AssignTaskCommand(Guid UserId, AssignDto AssignDto) : IRequest<Unit>;
+public record AssignTaskCommand(Guid UserId, AssignDto AssignDto) : IRequest<Result<Unit>>;
 
-public class AssignTaskCommandHandler : IRequestHandler<AssignTaskCommand, Unit>
+public class AssignTaskCommandHandler : IRequestHandler<AssignTaskCommand, Result<Unit>>
 {
     public readonly IApplicationDbContext _context;
     public readonly IConfiguration _configuration;
@@ -24,20 +25,26 @@ public class AssignTaskCommandHandler : IRequestHandler<AssignTaskCommand, Unit>
         _configuration = configuration;
     }
 
-    public async Task<Unit> Handle(AssignTaskCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Unit>> Handle(AssignTaskCommand request, CancellationToken cancellationToken)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken: cancellationToken) ?? throw new UnauthorizedAccessException();
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken: cancellationToken);
 
-        var assignee = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.AssignDto.AsigneeId, cancellationToken: cancellationToken) ?? throw new NotFoundException("User not found");
+        if (user == null) return Result<Unit>.Failure(new UnauthorizedAccessException());
+
+        var assignee = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.AssignDto.AsigneeId, cancellationToken: cancellationToken);
+
+        if (assignee == null) return Result<Unit>.Failure(new NotFoundException("User not found"));
 
         var task = await _context.Tasks
         .Include(t => t.Column)
         .ThenInclude(c => c.Board)
         .ThenInclude(b => b.UserBoards)
         .Include(t => t.UserTasks)
-        .FirstOrDefaultAsync(t => t.Id == request.AssignDto.TaskId, cancellationToken: cancellationToken) ?? throw new NotFoundException("Task not found");
+        .FirstOrDefaultAsync(t => t.Id == request.AssignDto.TaskId, cancellationToken: cancellationToken);
 
-        if (!task.Column.Board.UserBoards.Any(ub => ub.UserId == assignee.Id)) throw new ForbiddenException();
+        if (task == null) return Result<Unit>.Failure(new NotFoundException("Task not found"));
+        if (!task.Column.Board.UserBoards.Any(ub => ub.UserId == user.Id)) return Result<Unit>.Failure(new ForbiddenException());
+        if (!task.Column.Board.UserBoards.Any(ub => ub.UserId == assignee.Id)) return Result<Unit>.Failure(new BadRequestException("Assignee is not related to the board."));
 
         string log;
         var frontendUrl = _configuration["Frontend:Url"] ?? "";
@@ -74,9 +81,8 @@ public class AssignTaskCommandHandler : IRequestHandler<AssignTaskCommand, Unit>
             Log = log
         };
         var command = new CreateLogCommand(activityLog);
-        await _mediator.Send(command, cancellationToken);
+        var result = await _mediator.Send(command, cancellationToken);
 
-
-        return Unit.Value;
+        return result;
     }
 }

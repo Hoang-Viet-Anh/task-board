@@ -2,14 +2,16 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TaskBoard.Application.Authentication.Commands.RefreshToken;
+using TaskBoard.Application.Common.Exceptions;
 using TaskBoard.Application.Common.Interfaces;
+using TaskBoard.Application.Common.Result;
 using TaskBoard.Domain.Entities;
 
 namespace TaskBoard.Application.Authentication.Commands.Login;
 
-public record LoginUserCommand(string Username, string Password) : IRequest<TokenResponse>;
+public record LoginUserCommand(string Username, string Password) : IRequest<Result<TokenResponse>>;
 
-public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, TokenResponse>
+public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, Result<TokenResponse>>
 {
     public readonly IApplicationDbContext _context;
     public readonly IJwtProviderService _jwtProviderService;
@@ -22,13 +24,17 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, TokenRe
         _passwordHasher = passwordHasher;
     }
 
-    public async Task<TokenResponse> Handle(LoginUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<TokenResponse>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username, cancellationToken: cancellationToken) ?? throw new UnauthorizedAccessException();
+        if (string.IsNullOrEmpty(request.Username.Trim()) || string.IsNullOrEmpty(request.Password)) return Result<TokenResponse>.Failure(new BadRequestException("Credentials is required"));
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username, cancellationToken: cancellationToken);
+
+        if (user == null) return Result<TokenResponse>.Failure(new UnauthorizedAccessException());
 
         var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash!, request.Password);
 
-        if (result == PasswordVerificationResult.Failed) throw new UnauthorizedAccessException();
+        if (result == PasswordVerificationResult.Failed) return Result<TokenResponse>.Failure(new UnauthorizedAccessException());
 
         if (result == PasswordVerificationResult.SuccessRehashNeeded)
         {
@@ -37,6 +43,6 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, TokenRe
 
         var tokenResponse = await _jwtProviderService.Create(user, cancellationToken);
 
-        return tokenResponse;
+        return Result<TokenResponse>.Success(tokenResponse);
     }
 }

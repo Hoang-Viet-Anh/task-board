@@ -29,7 +29,10 @@ public class ColumnController : ControllerBase
         var userId = _currentUserService.GetUserId();
 
         var command = new CreateColumnCommand(userId, ColumnDto);
-        await _mediator.Send(command);
+
+        var result = await _mediator.Send(command);
+
+        if (!result.IsSuccess) throw result.Error;
 
         return Created();
     }
@@ -40,7 +43,9 @@ public class ColumnController : ControllerBase
         var userId = _currentUserService.GetUserId();
 
         var command = new UpdateColumnCommand(userId, ColumnDto);
-        await _mediator.Send(command);
+        var result = await _mediator.Send(command);
+
+        if (!result.IsSuccess) throw result.Error;
 
         return Ok();
     }
@@ -51,7 +56,9 @@ public class ColumnController : ControllerBase
         var userId = _currentUserService.GetUserId();
 
         var command = new DeleteColumnCommand(userId, ColumnId);
-        await _mediator.Send(command);
+        var result = await _mediator.Send(command);
+
+        if (!result.IsSuccess) throw result.Error;
 
         return Ok();
     }
@@ -62,9 +69,11 @@ public class ColumnController : ControllerBase
         var userId = _currentUserService.GetUserId();
 
         var query = new GetColumnsByBoardId(userId, BoardId);
-        var columns = await _mediator.Send(query);
+        var result = await _mediator.Send(query);
 
-        return Ok(columns);
+        if (!result.IsSuccess) throw result.Error;
+
+        return Ok(result.Value);
     }
 
 }
